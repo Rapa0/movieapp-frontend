@@ -1,0 +1,96 @@
+ion-content {
+  --background: #f4f5f8;
+}
+
+.header-container {
+  padding: 32px 16px;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent), url('https://images.unsplash.com/photo-1574267432553-4b4628081c31?q=80&w=1931&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
+
+  ion-title {
+    font-weight: bold;
+    color: white;
+  }
+
+  ion-searchbar {
+    --background: rgba(255, 255, 255, 0.9);
+    --border-radius: 10px;
+    --box-shadow: none;
+    margin-top: 16px;
+  }
+
+  .genre-selector {
+    --background: transparent;
+    --padding-start: 0;
+    margin-top: 8px;
+
+    ion-select {
+      width: 100%;
+      --placeholder-color: #d1d1d1;
+      color: white;
+    }
+  }
+}
+
+.results-container {
+  padding: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  color: #888;
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+}
+
+.movie-card {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-title-background {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 8px 8px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    
+    ion-card-title {
+      color: white;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+  }
+}
+
+.no-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0e0e0;
+  
+  ion-icon {
+    font-size: 48px;
+    color: #a0a0a0;
+  }
+}

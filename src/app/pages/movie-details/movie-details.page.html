@@ -1,0 +1,120 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ movie?.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="movie">
+    <img [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" />
+    <ion-card-header>
+      <ion-card-title>{{ movie.title }}</ion-card-title>
+      <ion-card-subtitle>{{ movie.tagline }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-grid class="ion-padding-horizontal">
+      <ion-row>
+        <ion-col size="6">
+          <div class="ion-text-center">
+            <h2>Críticos</h2>
+            <ion-text color="primary"><h1>{{ criticScore ?? 'N/A' }} / 10</h1></ion-text>
+          </div>
+        </ion-col>
+        <ion-col size="6">
+          <div class="ion-text-center">
+            <h2>Audiencia</h2>
+            <ion-text color="secondary"><h1>{{ userScore ?? 'N/A' }} / 10</h1></ion-text>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-card-content>
+      <p>{{ movie.overview }}</p>
+    </ion-card-content>
+
+    <div class="ion-padding">
+      <h3>Reparto Principal</h3>
+      <ion-chip *ngFor="let actor of cast">
+        <ion-label>{{ actor.name }}</ion-label>
+      </ion-chip>
+    </div>
+  </div>
+
+  <div class="ion-padding">
+    <h3>Reseñas de Usuarios</h3>
+
+    <ion-card *ngIf="isLoggedIn$ | async; else loginToComment" class="comment-form-card">
+      <ion-card-header>
+        <ion-card-title>Deja tu reseña</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
+          <ion-item>
+            <ion-textarea label="Escribe tu opinión..." formControlName="texto"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-range aria-label="Puntuación" [min]="1" [max]="10" [pin]="true" formControlName="puntuacion">
+              <ion-label slot="start">1</ion-label>
+              <ion-label slot="end">10</ion-label>
+            </ion-range>
+          </ion-item>
+          <ion-button type="submit" expand="block" [disabled]="commentForm.invalid">Enviar</ion-button>
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <ng-template #loginToComment>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Únete a la Conversación</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="ion-text-center">
+          <p>Debes iniciar sesión para dejar tu reseña.</p>
+          <ion-button routerLink="/login">Iniciar Sesión</ion-button>
+          <ion-button routerLink="/register" fill="outline">Registrarse</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </ng-template>
+
+    <div *ngIf="comments.length > 0; else noComments">
+      <ion-card 
+        *ngFor="let comment of comments" 
+        [color]="comment.autorRol === 'critico' ? 'light' : ''">
+        
+        <ion-card-header>
+          <ion-card-subtitle>
+            {{ comment.autor.nombre }}
+            <ion-chip *ngIf="comment.autorRol === 'critico'" color="primary" class="critic-chip">
+              <ion-icon name="ribbon" size="small"></ion-icon>
+              <ion-label>Crítico</ion-label>
+            </ion-chip>
+          </ion-card-subtitle>
+          <div class="score-display">
+            {{ comment.puntuacion }} / 10
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          {{ comment.texto }}
+        </ion-card-content>
+
+        <ion-buttons *ngIf="(isLoggedIn$ | async) && comment.autor._id === currentUserId" class="action-buttons">
+          <ion-button fill="clear" (click)="handleEdit(comment)">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" (click)="handleDelete(comment._id)">
+            <ion-icon name="trash-outline" slot="icon-only" color="danger"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-card>
+    </div>
+    
+    <ng-template #noComments>
+      <p class="ion-text-center ion-padding">Aún no hay reseñas.</p>
+    </ng-template>
+  </div>
+</ion-content>

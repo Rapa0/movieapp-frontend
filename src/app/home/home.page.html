@@ -1,0 +1,32 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Películas</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment (ionChange)="onSortChange($event)" value="popularity.desc">
+      <ion-segment-button value="popularity.desc"><ion-label>Populares</ion-label></ion-segment-button>
+      <ion-segment-button value="release_date.desc"><ion-label>Recientes</ion-label></ion-segment-button>
+      <ion-segment-button value="vote_average.desc"><ion-label>Mejor Puntuadas</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let movie of movies">
+        <a [routerLink]="['/movie', movie.id]">
+          <ion-card>
+            <img *ngIf="movie.poster_path" [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" />
+            <div *ngIf="!movie.poster_path" class="no-image-placeholder"><span>No Image</span></div>
+            <ion-card-header><ion-card-title>{{ movie.title }}</ion-card-title></ion-card-header>
+          </ion-card>
+        </a>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  
+  <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

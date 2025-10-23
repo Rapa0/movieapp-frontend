@@ -1,0 +1,51 @@
+<ion-content [fullscreen]="true">
+  <div class="form-container">
+    <ion-card>
+      <ion-card-header class="ion-text-center">
+        <ion-card-title>Bienvenido</ion-card-title>
+        <ion-card-subtitle>Inicia sesión para continuar</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <ion-item fill="outline" class="ion-margin-bottom">
+            <ion-input
+              label="Correo Electrónico"
+              labelPlacement="floating"
+              type="email"
+              formControlName="email">
+            </ion-input>
+          </ion-item>
+
+          <ion-item fill="outline">
+            <ion-input
+              label="Contraseña"
+              labelPlacement="floating"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password">
+            </ion-input>
+            <ion-button fill="clear" slot="end" (click)="togglePasswordVisibility()">
+              <ion-icon slot="icon-only" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-item>
+          
+          <div class="forgot-password-link">
+            <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <ion-button 
+            type="submit" 
+            expand="block" 
+            [disabled]="loginForm.invalid"
+            class="ion-margin-top">
+            Entrar
+          </ion-button>
+
+          <div class="register-link">
+            <p>¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

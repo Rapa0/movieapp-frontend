@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Verificar Correo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="ion-text-center">
+    <h2>Revisa tu correo</h2>
+    <p>Hemos enviado un código de 6 dígitos a <strong>{{ email }}</strong>.</p>
+    <p>Por favor, ingrésalo a continuación para completar tu registro.</p>
+  </div>
+
+  <form [formGroup]="verifyForm" (ngSubmit)="onVerify()">
+    <ion-item>
+      <ion-input
+        label="Código de Verificación"
+        labelPlacement="floating"
+        type="text"
+        formControlName="codigo"
+        maxlength="6">
+      </ion-input>
+    </ion-item>
+
+    <ion-button
+      type="submit"
+      expand="block"
+      [disabled]="verifyForm.invalid"
+      class="ion-margin-top">
+      Verificar y Crear Cuenta
+    </ion-button>
+  </form>
+</ion-content>

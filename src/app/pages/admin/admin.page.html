@@ -1,0 +1,19 @@
+<ion-header><ion-toolbar><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/profile"></ion-back-button></ion-buttons><ion-title>Admin Panel</ion-title></ion-toolbar></ion-header>
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-list-header>Solicitudes Pendientes</ion-list-header>
+    <ion-item *ngFor="let user of pendingUsers">
+      <ion-label>
+        <h2>{{ user.nombre }}</h2>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Motivo:</strong> {{ user.solicitudCritico.motivo }}</p>
+        <p *ngIf="user.solicitudCritico.enlaces"><strong>Enlaces:</strong> {{ user.solicitudCritico.enlaces }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="approve(user._id)" color="success"><ion-icon name="checkmark-circle-outline" slot="icon-only"></ion-icon></ion-button>
+        <ion-button (click)="reject(user._id)" color="danger"><ion-icon name="close-circle-outline" slot="icon-only"></ion-icon></ion-button>
+      </ion-buttons>
+    </ion-item>
+    <ion-item *ngIf="pendingUsers.length === 0"><ion-label>No hay solicitudes pendientes.</ion-label></ion-item>
+  </ion-list>
+</ion-content>

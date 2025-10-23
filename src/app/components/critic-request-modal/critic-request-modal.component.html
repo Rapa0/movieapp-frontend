@@ -1,0 +1,13 @@
+<ion-header><ion-toolbar><ion-title>Solicitud para Crítico</ion-title></ion-toolbar></ion-header>
+<ion-content class="ion-padding">
+  <form [formGroup]="requestForm" (ngSubmit)="submit()">
+    <p>Explica por qué deberías ser un crítico y, si tienes, comparte enlaces a tus trabajos (blog, redes sociales, etc.).</p>
+    <ion-item>
+      <ion-textarea label="Motivo" labelPlacement="floating" formControlName="motivo" rows="5"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Enlaces (opcional)" labelPlacement="floating" formControlName="enlaces"></ion-input>
+    </ion-item>
+    <ion-button type="submit" expand="block" [disabled]="requestForm.invalid" class="ion-margin-top">Enviar Solicitud</ion-button>
+  </form>
+</ion-content>

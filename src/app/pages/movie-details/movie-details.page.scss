@@ -1,0 +1,31 @@
+.comment-form-card {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+
+ion-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.score-display {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}
+
+.critic-chip {
+  height: 20px;
+  font-size: 0.7em;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 8px 8px 0;
+}

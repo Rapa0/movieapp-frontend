@@ -1,0 +1,47 @@
+<ion-content [fullscreen]="true">
+  <div class="header-container">
+    <div class="header-content">
+      <ion-title size="large">Encuentra tu Próxima Película</ion-title>
+      <ion-searchbar 
+        placeholder="Buscar por nombre..." 
+        (ionInput)="handleSearch($event)"
+        [debounce]="500">
+      </ion-searchbar>
+      <ion-item lines="none" class="genre-selector">
+        <ion-select 
+          label="O explora por género" 
+          interface="popover" 
+          (ionChange)="handleGenreChange($event)">
+          <ion-select-option *ngFor="let genre of genres" [value]="genre.id">
+            {{ genre.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+  </div>
+
+  <div class="results-container">
+    <div *ngIf="searchResults.length === 0" class="empty-state">
+      <ion-icon name="film-outline"></ion-icon>
+      <p>Usa la búsqueda o selecciona un género para ver resultados.</p>
+    </div>
+    
+    <ion-grid *ngIf="searchResults.length > 0">
+      <ion-row>
+        <ion-col size="6" size-md="4" size-lg="3" *ngFor="let movie of searchResults">
+          <a [routerLink]="['/movie', movie.id]">
+            <ion-card class="movie-card">
+              <img *ngIf="movie.poster_path" [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" />
+              <div *ngIf="!movie.poster_path" class="no-image-placeholder">
+                <ion-icon name="videocam-off-outline"></ion-icon>
+              </div>
+              <div class="card-title-background">
+                <ion-card-title>{{ movie.title }}</ion-card-title>
+              </div>
+            </ion-card>
+          </a>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

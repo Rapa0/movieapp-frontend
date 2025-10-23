@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrarse</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+    <ion-list>
+      <ion-item>
+        <ion-input
+          label="Nombre"
+          labelPlacement="floating"
+          type="text"
+          formControlName="nombre"
+          errorText="El nombre es requerido."
+          [class.ion-invalid]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Correo Electrónico"
+          labelPlacement="floating"
+          type="email"
+          formControlName="email"
+          errorText="Ingresa un correo válido."
+          [class.ion-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+        </ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-input
+          label="Contraseña"
+          labelPlacement="floating"
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          helperText="Mínimo 6 caracteres"
+          [errorText]="getPasswordError()"
+          [class.ion-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+        </ion-input>
+        <ion-button fill="clear" slot="end" (click)="togglePasswordVisibility()">
+          <ion-icon slot="icon-only" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+
+      <ion-item>
+        <ion-input
+          label="Confirmar Contraseña"
+          labelPlacement="floating"
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          errorText="Las contraseñas no coinciden."
+          [class.ion-invalid]="registerForm.errors?.['passwordsMismatch'] && registerForm.get('confirmPassword')?.touched">
+        </ion-input>
+        <ion-button fill="clear" slot="end" (click)="toggleConfirmPasswordVisibility()">
+          <ion-icon slot="icon-only" [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+        </ion-button>
+      </ion-item>
+      
+    </ion-list>
+
+    <ion-button 
+      type="submit" 
+      expand="block" 
+      class="ion-margin-top">
+      Crear Cuenta
+    </ion-button>
+  </form>
+</ion-content>
