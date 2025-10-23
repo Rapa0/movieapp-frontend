@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { IonicModule, LoadingController } from '@ionic/angular';
+import { IonicModule, LoadingController, IonInfiniteScroll } from '@ionic/angular';
 import { MovieService } from '../services/movie.service';
 
 @Component({
@@ -12,11 +12,11 @@ import { MovieService } from '../services/movie.service';
   imports: [IonicModule, CommonModule, RouterModule],
 })
 export class HomePage implements OnInit {
-  public movies: any[] = [];
-  private currentPage = 1;
-  private sortBy = 'popularity.desc';
-  public infiniteScroll: any;
-
+  @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll | null = null;
+  
+  movies: any[] = [];
+  currentPage = 1;
+  sortBy = 'popularity.desc';
 
   constructor(
     private movieService: MovieService,
@@ -39,15 +39,24 @@ export class HomePage implements OnInit {
     this.movieService.getPopularMovies(this.currentPage, this.sortBy).subscribe({
       next: (data) => {
         this.movies.push(...data.results);
-        if (!event) { loading.dismiss(); }
-        if (event) { event.target.complete(); }
-        if (data.page === data.total_pages) {
-          if (this.infiniteScroll) this.infiniteScroll.disabled = true;
+        if (!event) {
+          loading.dismiss();
+        }
+        if (event) {
+          event.target.complete();
+        }
+        if (data.page === data.total_pages && this.infiniteScroll) {
+          this.infiniteScroll.disabled = true;
         }
       },
       error: (err) => {
-        console.error(err);
-        if (!event) { loading.dismiss(); }
+        console.error('ERROR AL CARGAR PELÍCULAS:', JSON.stringify(err));
+        if (!event) {
+          loading.dismiss();
+        }
+        if (event) {
+          event.target.complete();
+        }
       }
     });
   }
@@ -55,14 +64,15 @@ export class HomePage implements OnInit {
   loadMore(event: any) {
     this.currentPage++;
     this.loadMovies(event);
-    this.infiniteScroll = event.target;
   }
 
   onSortChange(event: any) {
     this.sortBy = event.detail.value;
     this.movies = [];
     this.currentPage = 1;
-    if (this.infiniteScroll) this.infiniteScroll.disabled = false;
+    if (this.infiniteScroll) {
+      this.infiniteScroll.disabled = false;
+    }
     this.loadMovies();
   }
 }

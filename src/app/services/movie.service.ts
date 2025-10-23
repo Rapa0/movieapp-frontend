@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 })
 export class MovieService {
   private tmdbUrl = 'https://api.themoviedb.org/3';
-  private backendUrl = 'https://movieapp-backend-nmo9.onrender.com';
+  private backendUrl = 'http://Movieapp-backend-env.eba-tekfyuuq.us-east-2.elasticbeanstalk.com ';
 
   constructor(
     private http: HttpClient, 

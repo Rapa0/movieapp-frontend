@@ -1,0 +1,44 @@
+ion-content {
+  --background: linear-gradient(160deg, #382d6b 0%, #121212 70%);
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+ion-card {
+  width: 90%;
+  max-width: 400px;
+  // Efecto de cristal esmerilado
+  --background: rgba(40, 40, 40, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+ion-card-title {
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+ion-item {
+  --background: transparent;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --highlight-color-focused: var(--ion-color-primary);
+  margin-bottom: 10px;
+}
+
+.login-link, .register-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.9em;
+
+  a {
+    color: var(--ion-color-primary);
+    font-weight: bold;
+    text-decoration: none;
+  }
+}

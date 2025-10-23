@@ -1,20 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { 
-  IonSearchbar,
-  IonItem,
-  IonSelect,
-  IonSelectOption,
-  IonContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonCard,
-  IonCardTitle,
-  IonIcon,
-  IonTitle
-} from '@ionic/angular/standalone';
+import { IonSearchbar, IonItem, IonSelect, IonSelectOption, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardTitle, IonIcon, IonTitle } from '@ionic/angular/standalone';
 import { MovieService } from '../services/movie.service';
 import { addIcons } from 'ionicons';
 import { filmOutline, videocamOffOutline } from 'ionicons/icons';
@@ -24,22 +11,7 @@ import { filmOutline, videocamOffOutline } from 'ionicons/icons';
   templateUrl: 'search.page.html',
   styleUrls: ['search.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule, 
-    RouterModule,
-    IonSearchbar,
-    IonItem,
-    IonSelect,
-    IonSelectOption,
-    IonContent,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonCard,
-    IonCardTitle,
-    IonIcon,
-    IonTitle
-  ],
+  imports: [ CommonModule, RouterModule, IonSearchbar, IonItem, IonSelect, IonSelectOption, IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardTitle, IonIcon, IonTitle ],
 })
 export class SearchPage implements OnInit {
   searchResults: any[] = [];

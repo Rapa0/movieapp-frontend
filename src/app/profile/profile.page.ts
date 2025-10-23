@@ -32,14 +32,8 @@ export class ProfilePage {
     this.isLoggedIn$.subscribe(isLoggedIn => {
       if (isLoggedIn) {
         this.authService.getMe().subscribe({
-          next: (userData) => {
-            this.user = userData;
-          },
-          error: (err) => {
-            if (err.status === 401) {
-              this.authService.logout();
-            }
-          }
+          next: (userData) => { this.user = userData; },
+          error: (err) => { if (err.status === 401) { this.authService.logout(); } }
         });
       } else {
         this.user = null;
@@ -48,11 +42,8 @@ export class ProfilePage {
   }
 
   async requestCritic() {
-    const modal = await this.modalCtrl.create({
-        component: CriticRequestModalComponent
-    });
+    const modal = await this.modalCtrl.create({ component: CriticRequestModalComponent });
     await modal.present();
-
     const { data } = await modal.onDidDismiss();
     if (data) {
         this.authService.requestCriticStatus(data).subscribe(() => {

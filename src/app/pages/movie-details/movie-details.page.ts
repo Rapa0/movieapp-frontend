@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { MovieService } from '../../services/movie.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { trashOutline, createOutline, ribbon } from 'ionicons/icons';
   templateUrl: './movie-details.page.html',
   styleUrls: ['./movie-details.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule] 
+  imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class MovieDetailsPage implements OnInit {
   movie: any;
@@ -26,6 +26,7 @@ export class MovieDetailsPage implements OnInit {
   criticScore: number | null = null;
   userScore: number | null = null;
   currentUserId: string | null = null;
+  showCommentForm = false;
   private movieId = '';
 
   constructor(
@@ -34,14 +35,14 @@ export class MovieDetailsPage implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private alertController: AlertController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private router: Router
   ) {
     this.isLoggedIn$ = this.authService.isLoggedIn$;
     this.commentForm = this.fb.group({
       texto: ['', Validators.required],
       puntuacion: [5, Validators.required]
     });
-    
     addIcons({ trashOutline, createOutline, ribbon });
   }
 
@@ -80,11 +81,28 @@ export class MovieDetailsPage implements OnInit {
     } else { this.userScore = null; }
   }
 
+  async promptComment() {
+    if (this.authService.isLoggedInValue()) {
+      this.showCommentForm = true;
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Inicia Sesión',
+        message: 'Necesitas una cuenta para poder dejar tu reseña.',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          { text: 'Iniciar Sesión', handler: () => { this.router.navigate(['/login']); } }
+        ]
+      });
+      await alert.present();
+    }
+  }
+
   submitComment() {
     if (this.commentForm.invalid) return;
     this.movieService.postComment(this.movieId, this.commentForm.value).subscribe(() => {
       this.loadComments();
       this.commentForm.reset({ puntuacion: 5 });
+      this.showCommentForm = false;
     });
   }
 
@@ -92,33 +110,17 @@ export class MovieDetailsPage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Confirmar',
       message: '¿Estás seguro de que quieres eliminar este comentario?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          handler: () => {
-            this.movieService.deleteComment(commentId).subscribe(() => this.loadComments());
-          }
-        }
-      ]
+      buttons: [ { text: 'Cancelar', role: 'cancel' }, { text: 'Eliminar', handler: () => { this.movieService.deleteComment(commentId).subscribe(() => this.loadComments()); } } ]
     });
     await alert.present();
   }
   
   async handleEdit(comment: any) {
-    const modal = await this.modalCtrl.create({
-        component: EditCommentModalComponent,
-        componentProps: {
-            comment: comment
-        }
-    });
+    const modal = await this.modalCtrl.create({ component: EditCommentModalComponent, componentProps: { comment: comment } });
     await modal.present();
-
     const { data } = await modal.onDidDismiss();
     if (data) {
-        this.movieService.updateComment(comment._id, data).subscribe(() => {
-            this.loadComments();
-        });
+        this.movieService.updateComment(comment._id, data).subscribe(() => { this.loadComments(); });
     }
   }
 }

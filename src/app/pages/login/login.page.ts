@@ -39,7 +39,6 @@ export class LoginPage {
     if (this.loginForm.invalid) {
       return;
     }
-
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         this.router.navigate(['/tabs/home']);
@@ -47,7 +46,7 @@ export class LoginPage {
       error: async (err) => {
         const alert = await this.alertController.create({
           header: 'Error al Iniciar Sesión',
-          message: 'Credenciales inválidas. Por favor, verifica tu correo y contraseña.',
+          message: 'Credenciales inválidas.',
           buttons: ['OK'],
         });
         await alert.present();
