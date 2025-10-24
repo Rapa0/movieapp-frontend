@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { IonicModule, LoadingController, IonInfiniteScroll, IonContent } from '@ionic/angular';
+import { IonicModule, LoadingController, IonInfiniteScroll, IonContent, AlertController } from '@ionic/angular';
 import { MovieService } from '../services/movie.service';
 
 @Component({
@@ -21,7 +21,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {
@@ -32,28 +33,49 @@ export class HomePage implements OnInit {
     if (this.isLoading && !event) return;
     this.isLoading = true;
 
+    let loading: HTMLIonLoadingElement | undefined;
     if (!event) {
-      const loading = await this.loadingCtrl.create({ message: 'Cargando cartelera...' });
+      loading = await this.loadingCtrl.create({ message: 'Cargando cartelera...' });
       await loading.present();
     }
 
-    this.movieService.getNowPlayingMovies(this.currentPage).subscribe({
-      next: (data: any) => {
-        this.movies.push(...data.results);
-        this.isLoading = false;
-        if (!event) this.loadingCtrl.dismiss();
-        if (event) event.target.complete();
-        if (data.page === data.total_pages && this.infiniteScroll) {
-          this.infiniteScroll.disabled = true;
+    try {
+      this.movieService.getNowPlayingMovies(this.currentPage).subscribe({
+        next: (data: any) => {
+          this.movies.push(...data.results);
+          this.isLoading = false;
+          if (event) event.target.complete();
+          if (data.page === data.total_pages && this.infiniteScroll) {
+            this.infiniteScroll.disabled = true;
+          }
+        },
+        error: async (err: any) => {
+          this.isLoading = false;
+          if (event) event.target.complete();
+          
+          let errorMsg = 'Error desconocido al cargar las películas.';
+          if (err.message) {
+            errorMsg = err.message;
+          } else if (err.error && err.error.message) {
+            errorMsg = err.error.message;
+          }
+
+          const alert = await this.alertCtrl.create({
+            header: 'Error de Conexión',
+            message: `No se pudo cargar la cartelera. Detalles: ${errorMsg}`,
+            buttons: ['OK']
+          });
+          await alert.present();
         }
-      },
-      error: (err: any) => {
-        console.error('ERROR AL CARGAR CARTELERA:', JSON.stringify(err));
-        this.isLoading = false;
-        if (!event) this.loadingCtrl.dismiss();
-        if (event) event.target.complete();
+      });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.isLoading = false;
+      if (loading) {
+        await loading.dismiss();
       }
-    });
+    }
   }
   
   loadMore(event: any) {

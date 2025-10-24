@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'; 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
@@ -16,11 +16,15 @@ export class MovieService {
     private authService: AuthService
   ) {}
 
-  getPopularMovies(page = 1, sortBy = 'popularity.desc'): Observable<any> {
+  getNowPlayingMovies(page = 1, sortBy = 'popularity.desc'): Observable<any> {
     const apiKey = environment.apiKey;
-    return this.http.get(`${this.tmdbUrl}/discover/movie?api_key=${apiKey}&page=${page}&sort_by=${sortBy}&language=es-ES`);
+    return this.http.get(`${this.tmdbUrl}/movie/now_playing?api_key=${apiKey}&page=${page}&language=es-ES`);
   }
-
+  
+  getMovieDetails(id: string): Observable<any> {
+    return this.http.get(`${this.backendUrl}/api/peliculas/${id}`);
+  }
+  
   getMovieCredits(movieId: string): Observable<any> {
     const apiKey = environment.apiKey;
     return this.http.get(`${this.tmdbUrl}/movie/${movieId}/credits?api_key=${apiKey}&language=es-ES`);
@@ -39,15 +43,6 @@ export class MovieService {
   getMoviesByGenre(genreId: string, page = 1): Observable<any> {
     const apiKey = environment.apiKey;
     return this.http.get(`${this.tmdbUrl}/discover/movie?api_key=${apiKey}&with_genres=${genreId}&page=${page}&language=es-ES`);
-  }
-  
-  getNowPlayingMovies(page = 1): Observable<any> {
-    const apiKey = environment.apiKey;
-    return this.http.get(`${this.tmdbUrl}/movie/now_playing?api_key=${apiKey}&page=${page}&language=es-ES`);
-  }
-
-  getMovieDetails(id: string): Observable<any> {
-    return this.http.get(`${this.backendUrl}/api/peliculas/${id}`);
   }
 
   getComments(movieId: string): Observable<any> {
