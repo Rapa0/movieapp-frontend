@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { IonicModule, LoadingController, IonInfiniteScroll } from '@ionic/angular';
+import { IonicModule, LoadingController, IonInfiniteScroll, IonContent } from '@ionic/angular';
 import { MovieService } from '../services/movie.service';
 
 @Component({
@@ -12,11 +12,12 @@ import { MovieService } from '../services/movie.service';
   imports: [IonicModule, CommonModule, RouterModule],
 })
 export class HomePage implements OnInit {
-  @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll | null = null;
+  @ViewChild(IonInfiniteScroll) infiniteScroll!: IonInfiniteScroll;
+  @ViewChild(IonContent) content!: IonContent;
   
   movies: any[] = [];
   currentPage = 1;
-  sortBy = 'popularity.desc';
+  isLoading = false;
 
   constructor(
     private movieService: MovieService,
@@ -28,35 +29,29 @@ export class HomePage implements OnInit {
   }
 
   async loadMovies(event?: any) {
-    const loading = await this.loadingCtrl.create({
-      message: 'Cargando...',
-      spinner: 'bubbles',
-    });
+    if (this.isLoading && !event) return;
+    this.isLoading = true;
+
     if (!event) {
+      const loading = await this.loadingCtrl.create({ message: 'Cargando cartelera...' });
       await loading.present();
     }
 
-    this.movieService.getPopularMovies(this.currentPage, this.sortBy).subscribe({
-      next: (data) => {
+    this.movieService.getNowPlayingMovies(this.currentPage).subscribe({
+      next: (data: any) => {
         this.movies.push(...data.results);
-        if (!event) {
-          loading.dismiss();
-        }
-        if (event) {
-          event.target.complete();
-        }
+        this.isLoading = false;
+        if (!event) this.loadingCtrl.dismiss();
+        if (event) event.target.complete();
         if (data.page === data.total_pages && this.infiniteScroll) {
           this.infiniteScroll.disabled = true;
         }
       },
-      error: (err) => {
-        console.error('ERROR AL CARGAR PELÍCULAS:', JSON.stringify(err));
-        if (!event) {
-          loading.dismiss();
-        }
-        if (event) {
-          event.target.complete();
-        }
+      error: (err: any) => {
+        console.error('ERROR AL CARGAR CARTELERA:', JSON.stringify(err));
+        this.isLoading = false;
+        if (!event) this.loadingCtrl.dismiss();
+        if (event) event.target.complete();
       }
     });
   }
@@ -64,15 +59,5 @@ export class HomePage implements OnInit {
   loadMore(event: any) {
     this.currentPage++;
     this.loadMovies(event);
-  }
-
-  onSortChange(event: any) {
-    this.sortBy = event.detail.value;
-    this.movies = [];
-    this.currentPage = 1;
-    if (this.infiniteScroll) {
-      this.infiniteScroll.disabled = false;
-    }
-    this.loadMovies();
   }
 }

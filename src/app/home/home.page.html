@@ -1,13 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Películas</ion-title>
-  </ion-toolbar>
-  <ion-toolbar>
-    <ion-segment (ionChange)="onSortChange($event)" [value]="sortBy">
-      <ion-segment-button value="popularity.desc"><ion-label>Populares</ion-label></ion-segment-button>
-      <ion-segment-button value="release_date.desc"><ion-label>Recientes</ion-label></ion-segment-button>
-      <ion-segment-button value="vote_average.desc"><ion-label>Mejor Puntuadas</ion-label></ion-segment-button>
-    </ion-segment>
+    <ion-title>
+      En Cartelera
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -17,9 +12,6 @@
       <ion-col size="6" *ngFor="let i of [1,2,3,4,5,6]">
         <ion-card class="movie-card">
           <ion-skeleton-text [animated]="true" style="width: 100%; height: 250px;"></ion-skeleton-text>
-          <ion-card-header>
-            <ion-skeleton-text [animated]="true" style="width: 80%;"></ion-skeleton-text>
-          </ion-card-header>
         </ion-card>
       </ion-col>
     </ion-row>
@@ -31,6 +23,9 @@
         <a [routerLink]="['/movie', movie.id]">
           <ion-card class="movie-card">
             <img *ngIf="movie.poster_path" [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" />
+            <div *ngIf="!movie.poster_path" class="no-image-placeholder">
+              <ion-icon name="videocam-off-outline"></ion-icon>
+            </div>
           </ion-card>
         </a>
       </ion-col>

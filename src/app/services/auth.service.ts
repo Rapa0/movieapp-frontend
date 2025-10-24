@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://Movieapp-backend-env.eba-tekfyuuq.us-east-2.elasticbeanstalk.com ';
+private baseUrl = 'https://movieapp-backend-production-4a5b.up.railway.app/api';
   
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();

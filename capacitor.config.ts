@@ -7,14 +7,16 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     allowNavigation: [
-      'api.themoviedb.org',
-      'movieapp-backend-nmo9.onrender.com'
+      'tu-url-de-backend.onrender.com' 
     ]
   },
   plugins: {
     CapacitorHttp: {
       enabled: true
     }
+  },
+  android: {
+    allowMixedContent: true 
   }
 };
 
