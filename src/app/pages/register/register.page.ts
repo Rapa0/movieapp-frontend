@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { addIcons } from 'ionicons';
@@ -31,7 +31,7 @@ export class RegisterPage {
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      nombre: ['', [Validators.required]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
@@ -40,6 +40,8 @@ export class RegisterPage {
     addIcons({ eyeOutline, eyeOffOutline });
   }
   
+  get f() { return this.registerForm.controls; }
+
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
@@ -48,23 +50,19 @@ export class RegisterPage {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
   
-  getPasswordError(): string {
-    const passwordControl = this.registerForm.get('password');
-    if (passwordControl?.hasError('required')) {
-      return 'La contraseña es requerida.';
-    }
-    if (passwordControl?.hasError('minlength')) {
-      return 'Debe tener al menos 6 caracteres.';
-    }
-    return '';
-  }
-
   onRegister() {
     this.registerForm.markAllAsTouched();
     if (this.registerForm.invalid) {
       return;
     }
-    this.authService.register(this.registerForm.value).subscribe({
+    
+    const userData = {
+      nombre: this.registerForm.value.username,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password
+    };
+    
+    this.authService.register(userData).subscribe({
       next: (response) => {
         this.router.navigate(['/verify-code'], {
           state: { email: this.registerForm.value.email }

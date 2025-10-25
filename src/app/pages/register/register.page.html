@@ -1,71 +1,87 @@
-<ion-content [fullscreen]="true">
-  <div class="form-container">
-    <ion-card>
-      <ion-card-header class="ion-text-center">
-        <ion-card-title>Crea tu Cuenta</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-          <ion-item fill="outline" class="ion-margin-bottom">
-            <ion-input
-              label="Nombre"
-              labelPlacement="floating"
-              type="text"
-              formControlName="nombre"
-              errorText="El nombre es requerido."
-              [class.ion-invalid]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
-            </ion-input>
-          </ion-item>
-          <ion-item fill="outline" class="ion-margin-bottom">
-            <ion-input
-              label="Correo Electrónico"
-              labelPlacement="floating"
-              type="email"
-              formControlName="email"
-              errorText="Ingresa un correo válido."
-              [class.ion-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-            </ion-input>
-          </ion-item>
-          <ion-item fill="outline" class="ion-margin-bottom">
-            <ion-input
-              label="Contraseña"
-              labelPlacement="floating"
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              helperText="Mínimo 6 caracteres"
-              [errorText]="getPasswordError()"
-              [class.ion-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-            </ion-input>
-            <ion-button fill="clear" slot="end" (click)="togglePasswordVisibility()">
-              <ion-icon slot="icon-only" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-            </ion-button>
-          </ion-item>
-          <ion-item fill="outline">
-            <ion-input
-              label="Confirmar Contraseña"
-              labelPlacement="floating"
-              [type]="showConfirmPassword ? 'text' : 'password'"
-              formControlName="confirmPassword"
-              errorText="Las contraseñas no coinciden."
-              [class.ion-invalid]="registerForm.errors?.['passwordsMismatch'] && registerForm.get('confirmPassword')?.touched">
-            </ion-input>
-            <ion-button fill="clear" slot="end" (click)="toggleConfirmPasswordVisibility()">
-              <ion-icon slot="icon-only" [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-            </ion-button>
-          </ion-item>
-          
-          <ion-button 
-            type="submit" 
-            expand="block" 
-            class="ion-margin-top">
-            Crear Cuenta
-          </ion-button>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-          <div class="login-link">
-            <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia Sesión</a></p>
-          </div>
-        </form>
-      </ion-card-content>
-    </ion-card>
+<ion-content [fullscreen]="true">
+  <div class="header-container"> 
+    <div class="header-content">
+      <ion-title size="large" class="ion-text-center ion-padding-bottom">Únete a MovieApp</ion-title>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+        
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <input type="text" formControlName="username" placeholder="Nombre de Usuario" class="native-input"/>
+        </ion-item>
+        <div *ngIf="f['username'].touched && f['username'].errors" class="error-message">
+          <p *ngIf="f['username'].errors['required']">El nombre es obligatorio.</p>
+          <p *ngIf="f['username'].errors['minlength']">Mínimo 3 caracteres.</p>
+        </div>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <input type="email" formControlName="email" placeholder="Correo Electrónico" class="native-input"/>
+        </ion-item>
+        <div *ngIf="f['email'].touched && f['email'].errors" class="error-message">
+          <p *ngIf="f['email'].errors['required']">El correo es obligatorio.</p>
+          <p *ngIf="f['email'].errors['email']">Formato de correo inválido.</p>
+        </div>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Contraseña" class="native-input"/>
+          <ion-icon slot="end" 
+                    [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                    (click)="togglePasswordVisibility()"
+                    aria-label="Toggle password visibility"></ion-icon>
+        </ion-item>
+        <div *ngIf="f['password'].touched && f['password'].errors" class="error-message">
+          <p *ngIf="f['password'].errors['required']">La contraseña es obligatoria.</p>
+          <p *ngIf="f['password'].errors['minlength']">Mínimo 6 caracteres.</p>
+        </div>
+
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="Confirmar Contraseña" class="native-input"/>
+          <ion-icon slot="end" 
+                    [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"
+                    (click)="toggleConfirmPasswordVisibility()"
+                    aria-label="Toggle confirm password visibility"></ion-icon>
+        </ion-item>
+        <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].errors" class="error-message">
+          <p *ngIf="f['confirmPassword'].errors['required']">La confirmación es obligatoria.</p>
+        </div>
+        <div *ngIf="registerForm.errors?.['passwordsMismatch'] && f['confirmPassword'].touched" class="error-message">
+          <p>Las contraseñas no coinciden.</p>
+        </div>
+
+        <ion-button expand="block" type="submit" [disabled]="registerForm.invalid" class="ion-margin-top">
+          Registrarse
+        </ion-button>
+      </form>
+    </div>
   </div>
 </ion-content>
+
+<style>
+  .native-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    padding: 16px 10px;
+    font-size: inherit;
+    color: #000;
+    outline: none; 
+    flex: 1; 
+  }
+  ion-item::part(native) {
+    padding-left: 0; 
+    padding-right: 0; 
+    display: flex; 
+    align-items: center; 
+  }
+  .native-input::placeholder {
+    color: #888;
+    opacity: 1;
+  }
+</style>

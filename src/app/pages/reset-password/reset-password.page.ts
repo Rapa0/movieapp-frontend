@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common'; 
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -13,7 +13,12 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   templateUrl: './reset-password.page.html',
   styleUrls: ['./reset-password.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [
+    IonicModule, 
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterModule
+  ]
 })
 export class ResetPasswordPage implements OnInit {
   resetForm: FormGroup;
@@ -45,6 +50,9 @@ export class ResetPasswordPage implements OnInit {
     
     addIcons({ eyeOutline, eyeOffOutline });
   }
+
+  get f() { return this.resetForm.controls; }
+  get c() { return this.codeForm.controls; }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -94,15 +102,15 @@ export class ResetPasswordPage implements OnInit {
 
   async onSubmit() {
     this.resetForm.markAllAsTouched();
-    if (this.resetForm.get('password')?.invalid) return;
-
-    if (this.resetForm.errors?.['passwordsMismatch']) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Las contraseñas no coinciden. Por favor, inténtalo de nuevo.',
-        buttons: ['OK']
-      });
-      await alert.present();
+    if (this.resetForm.invalid) {
+      if (this.resetForm.errors?.['passwordsMismatch']) {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'Las contraseñas no coinciden.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
       return;
     }
 

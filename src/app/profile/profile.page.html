@@ -1,58 +1,55 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Perfil</ion-title>
+  <ion-toolbar color="primary">
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Perfil</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true">
+  <div class="header-container">
+    <div class="header-content">
 
-  <div *ngIf="(isLoggedIn$ | async) === false">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Únete a la Comunidad</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>Inicia sesión o regístrate para poder dejar tus propias reseñas y puntuaciones.</p>
-        <ion-button expand="block" routerLink="/login" class="ion-margin-top">Iniciar Sesión</ion-button>
-        <ion-button expand="block" routerLink="/register" fill="outline">Registrarse</ion-button>
-      </ion-card-content>
-    </ion-card>
+      <ng-container *ngIf="userAuthenticated">
+        <ion-card class="profile-card">
+          <div class="user-avatar-section">
+            <ion-icon name="person-circle" class="user-avatar"></ion-icon>
+            <ion-card-title class="ion-text-center">{{ userName }}</ion-card-title>
+            <ion-card-subtitle class="ion-text-center">{{ userEmail }}</ion-card-subtitle>
+          </div>
+          
+          <ion-list lines="full" class="ion-margin-top">
+            <ion-item button detail>
+              <ion-icon slot="start" name="settings-outline"></ion-icon>
+              <ion-label>Configuración de Cuenta</ion-label>
+            </ion-item>
+            <ion-item button detail>
+              <ion-icon slot="start" name="star-outline"></ion-icon>
+              <ion-label>Mis Calificaciones</ion-label>
+            </ion-item>
+          </ion-list>
+          
+          <ion-button expand="block" color="danger" class="ion-margin-top" (click)="onLogout()">
+            Cerrar Sesión
+          </ion-button>
+        </ion-card>
+      </ng-container>
+
+      <ng-container *ngIf="!userAuthenticated">
+        <ion-card class="guest-card">
+          <ion-icon name="film-outline" class="guest-icon"></ion-icon>
+          <ion-card-header>
+            <ion-card-title class="ion-text-center">Únete a la Comunidad</ion-card-title>
+            <ion-card-subtitle class="ion-text-center">Inicia sesión o regístrate para poder dejar tus propias reseñas y puntuaciones.</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content class="ion-padding">
+            <ion-button expand="block" (click)="goToLogin()" class="ion-margin-bottom">
+              INICIAR SESIÓN
+            </ion-button>
+            <ion-button expand="block" fill="outline" (click)="goToRegister()">
+              REGISTRARSE
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+
+    </div>
   </div>
-
-  <div *ngIf="user">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>¡Bienvenido, {{ user.nombre }}!</ion-card-title>
-        <ion-card-subtitle>Rol: {{ user.rol }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        
-        <ion-button *ngIf="user.rol === 'usuario' && user.estado === 'activo'" (click)="requestCritic()" expand="block" fill="outline">
-          Solicitar ser Crítico
-        </ion-button>
-        
-        <ion-chip *ngIf="user.estado === 'pendiente_critico'" color="warning">
-          <ion-icon name="hourglass-outline"></ion-icon>
-          <ion-label>Solicitud de Crítico Pendiente</ion-label>
-        </ion-chip>
-        
-        <ion-chip *ngIf="user.rol === 'critico'" color="primary">
-          <ion-icon name="ribbon-outline"></ion-icon>
-          <ion-label>Rol: Crítico</ion-label>
-        </ion-chip>
-
-        <ion-button *ngIf="user.rol === 'admin'" expand="block" routerLink="/admin" class="ion-margin-top">
-          Panel de Administrador
-        </ion-button>
-        
-        <ion-button expand="block" color="danger" (click)="logout()" class="ion-margin-top">Cerrar Sesión</ion-button>
-      </ion-card-content>
-    </ion-card>
-  </div>
-
 </ion-content>

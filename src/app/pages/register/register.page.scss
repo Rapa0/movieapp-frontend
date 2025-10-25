@@ -1,44 +1,94 @@
 ion-content {
-  --background: linear-gradient(160deg, #382d6b 0%, #121212 70%);
+  --background: #f4f5f8;
 }
 
-.form-container {
+.header-container {
+  min-height: 100%; 
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  height: 100%;
+  padding: 32px 16px;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1974&auto.format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: white;
 }
 
-ion-card {
-  width: 90%;
-  max-width: 400px;
-  // Efecto de cristal esmerilado
-  --background: rgba(40, 40, 40, 0.6);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+.header-content {
+  max-width: 450px; 
+  width: 100%;
+  margin: 0 auto;
 }
 
-ion-card-title {
-  font-size: 1.8em;
+ion-title {
   font-weight: bold;
+  color: white;
+  margin-bottom: 24px;
 }
 
 ion-item {
-  --background: transparent;
-  --border-color: rgba(255, 255, 255, 0.2);
-  --highlight-color-focused: var(--ion-color-primary);
-  margin-bottom: 10px;
+  --background: rgba(255, 255, 255, 0.9);
+  --border-radius: 10px;
+  color: #333;
+  --placeholder-color: #888;
+  margin-bottom: 16px;
 }
 
-.login-link, .register-link {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 0.9em;
+.native-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 16px 10px;
+  font-size: inherit;
+  color: #000 !important;
+  outline: none; 
+  flex: 1; 
+  position: relative;
+  z-index: 2;
+}
 
-  a {
-    color: var(--ion-color-primary);
-    font-weight: bold;
-    text-decoration: none;
-  }
+ion-item::part(native) {
+  padding-left: 0; 
+  padding-right: 0; 
+  display: flex; 
+  align-items: center; 
+}
+
+.native-input::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
+ion-label {
+    color: #555 !important;
+}
+
+ion-icon {
+    color: var(--ion-color-medium-shade);
+    position: relative;
+    z-index: 3;
+}
+
+a {
+    color: var(--ion-color-light);
+}
+
+p {
+    color: #eee;
+}
+
+.error-message {
+  margin-top: -10px;
+  margin-bottom: 16px;
+  padding-left: 15px;
+}
+
+.error-message p {
+  color: var(--ion-color-warning);
+  font-size: 0.8em;
+  margin: 2px 0;
+  background-color: rgba(0,0,0,0.6);
+  padding: 3px 6px;
+  border-radius: 3px;
+  display: inline-block;
 }

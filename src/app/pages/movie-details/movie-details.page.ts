@@ -21,7 +21,7 @@ export class MovieDetailsPage implements OnInit {
   movie: any;
   comments: any[] = [];
   cast: any[] = [];
-  isLoggedIn$: Observable<boolean>;
+  isLoggedIn$: Observable<boolean | null>; // Corrected type to accept null
   commentForm: FormGroup;
   criticScore: number | null = null;
   userScore: number | null = null;
@@ -38,7 +38,7 @@ export class MovieDetailsPage implements OnInit {
     private modalCtrl: ModalController,
     private router: Router
   ) {
-    this.isLoggedIn$ = this.authService.isLoggedIn$;
+    this.isLoggedIn$ = this.authService.isLoggedIn$; // Assign the Observable<boolean | null>
     this.commentForm = this.fb.group({
       texto: ['', Validators.required],
       puntuacion: [5, Validators.required]
@@ -51,8 +51,9 @@ export class MovieDetailsPage implements OnInit {
     this.loadAllData();
   }
 
-  ionViewWillEnter() {
-    this.currentUserId = this.authService.getUserId();
+  // Corrected: Use async/await for getUserId
+  async ionViewWillEnter() { 
+    this.currentUserId = await this.authService.getUserId(); 
   }
 
   loadAllData() {
@@ -82,9 +83,11 @@ export class MovieDetailsPage implements OnInit {
   }
 
   async promptComment() {
-    if (this.authService.isLoggedInValue()) {
+    // Check login status asynchronously if needed, or use the synchronous check cautiously
+    const isLoggedIn = this.authService.isLoggedInValue(); 
+    if (isLoggedIn === true) { // Explicitly check for true, ignoring null
       this.showCommentForm = true;
-    } else {
+    } else if (isLoggedIn === false) { // Handle case where user is definitely logged out
       const alert = await this.alertController.create({
         header: 'Inicia Sesión',
         message: 'Necesitas una cuenta para poder dejar tu reseña.',
@@ -94,7 +97,8 @@ export class MovieDetailsPage implements OnInit {
         ]
       });
       await alert.present();
-    }
+    } 
+    // If isLoggedIn is null, you might want to show a loading state or disable the button
   }
 
   submitComment() {

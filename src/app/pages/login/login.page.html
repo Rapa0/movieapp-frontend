@@ -1,51 +1,72 @@
+<ion-header>
+  <ion-toolbar color="primary">
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true">
-  <div class="form-container">
-    <ion-card>
-      <ion-card-header class="ion-text-center">
-        <ion-card-title>Bienvenido</ion-card-title>
-        <ion-card-subtitle>Inicia sesión para continuar</ion-card-subtitle>
-      </ion-card-header>
+  <div class="header-container"> 
+    <div class="header-content">
+      <ion-title size="large" class="ion-text-center ion-padding-bottom"></ion-title>
 
-      <ion-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-          <ion-item fill="outline" class="ion-margin-bottom">
-            <ion-input
-              label="Correo Electrónico"
-              labelPlacement="floating"
-              type="email"
-              formControlName="email">
-            </ion-input>
-          </ion-item>
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <input #emailInput type="email" formControlName="email" placeholder="Correo Electrónico" class="native-input"/>
+        </ion-item>
+        <div *ngIf="f['email'].touched && f['email'].errors" class="error-message">
+          <p *ngIf="f['email'].errors['required']">El correo es obligatorio.</p>
+          <p *ngIf="f['email'].errors['email']">Formato de correo inválido.</p>
+        </div>
 
-          <ion-item fill="outline">
-            <ion-input
-              label="Contraseña"
-              labelPlacement="floating"
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password">
-            </ion-input>
-            <ion-button fill="clear" slot="end" (click)="togglePasswordVisibility()">
-              <ion-icon slot="icon-only" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-            </ion-button>
-          </ion-item>
-          
-          <div class="forgot-password-link">
-            <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
-          </div>
+        <ion-item fill="outline" class="ion-margin-bottom">
 
-          <ion-button 
-            type="submit" 
-            expand="block" 
-            [disabled]="loginForm.invalid"
-            class="ion-margin-top">
-            Entrar
-          </ion-button>
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Contraseña" class="native-input"/>
+          <ion-icon slot="end" 
+                    [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
+                    (click)="togglePasswordVisibility()"
+                    aria-label="Toggle password visibility"></ion-icon>
+        </ion-item>
+        <div *ngIf="f['password'].touched && f['password'].errors" class="error-message">
+          <p *ngIf="f['password'].errors['required']">La contraseña es obligatoria.</p>
+          <p *ngIf="f['password'].errors['minlength']">Mínimo 6 caracteres.</p>
+        </div>
 
-          <div class="register-link">
-            <p>¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>
-          </div>
-        </form>
-      </ion-card-content>
-    </ion-card>
+        <p class="ion-text-end ion-padding-bottom">
+          <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
+        </p>
+
+        <ion-button expand="block" type="submit" [disabled]="loginForm.invalid" class="ion-margin-top">
+          Entrar
+        </ion-button>
+
+        <p class="ion-text-center ion-margin-top">
+          ¿No tienes cuenta? <a routerLink="/register">Regístrate</a>
+        </p>
+      </form>
+    </div>
   </div>
 </ion-content>
+
+<style>
+  .native-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    padding: 16px 10px; 
+    font-size: inherit;
+    color: #000;
+    outline: none; 
+    flex: 1; 
+  }
+  ion-item::part(native) {
+    padding-left: 0; 
+    padding-right: 0; 
+    display: flex; 
+    align-items: center; 
+  }
+
+  .native-input::placeholder {
+    color: #888; 
+    opacity: 1; 
+  }
+</style>

@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, AlertController, IonInput } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { addIcons } from 'ionicons';
@@ -15,6 +15,8 @@ import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
   imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule]
 })
 export class LoginPage {
+  @ViewChild('emailInput', { static: false }) emailInput!: IonInput; 
+
   loginForm: FormGroup;
   showPassword = false;
 
@@ -26,9 +28,24 @@ export class LoginPage {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6)]], 
     });
     addIcons({ eyeOutline, eyeOffOutline });
+  }
+
+  get f() { return this.loginForm.controls; }
+
+  ionViewDidEnter() {
+    setTimeout(() => {
+      if (this.emailInput && typeof this.emailInput.setFocus === 'function') {
+        this.emailInput.setFocus();
+      } else if (this.emailInput) {
+        const nativeEl = (this.emailInput as any).el?.querySelector('input');
+        if (nativeEl) {
+            nativeEl.focus();
+        }
+      }
+    }, 300); 
   }
 
   togglePasswordVisibility(): void {
@@ -37,16 +54,25 @@ export class LoginPage {
 
   async onLogin() {
     if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      console.log('Formulario inválido'); 
       return;
     }
+
+    console.log('Intentando iniciar sesión con:', this.loginForm.value); 
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
-        this.router.navigate(['/tabs/home']);
+        console.log('Respuesta de login exitosa:', response); 
+        console.log('Navegando a /tabs/home...');
+        this.router.navigate(['/tabs/home']); 
       },
       error: async (err) => {
+        console.error('Error en la respuesta de login:', err); 
+        
         const alert = await this.alertController.create({
           header: 'Error al Iniciar Sesión',
-          message: 'Credenciales inválidas.',
+          message: err?.error?.msg || 'Credenciales inválidas o error de servidor.', 
           buttons: ['OK'],
         });
         await alert.present();

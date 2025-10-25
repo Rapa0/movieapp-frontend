@@ -3,7 +3,7 @@ import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: 'tabs',
+    path: '', 
     component: TabsPage,
     children: [
       {
@@ -22,15 +22,10 @@ export const routes: Routes = [
           import('../profile/profile.page').then((m) => m.ProfilePage), 
       },
       {
-        path: '',
-        redirectTo: '/tabs/home',
+        path: '', 
+        redirectTo: 'home', 
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/home',
-    pathMatch: 'full',
   },
 ];

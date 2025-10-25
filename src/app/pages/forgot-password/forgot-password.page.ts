@@ -9,7 +9,12 @@ import { Router, RouterModule } from '@angular/router';
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [
+    IonicModule, 
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterModule
+  ],
 })
 export class ForgotPasswordPage {
   forgotForm: FormGroup;
@@ -25,6 +30,8 @@ export class ForgotPasswordPage {
     });
   }
 
+  get f() { return this.forgotForm.controls; }
+
   async onSubmit() {
     this.forgotForm.markAllAsTouched(); 
     if (this.forgotForm.invalid) {
@@ -36,8 +43,8 @@ export class ForgotPasswordPage {
     this.authService.forgotPassword(emailSent).subscribe({
       next: async (res) => {
         const alert = await this.alertController.create({
-          header: 'Proceso Iniciado',
-          message: res.msg,
+          header: 'Correo Enviado',
+          message: 'Si existe una cuenta, te hemos enviado un código.',
           buttons: ['OK']
         });
         await alert.present();
@@ -49,8 +56,8 @@ export class ForgotPasswordPage {
       },
       error: async (err) => {
         const alert = await this.alertController.create({
-          header: 'Proceso Iniciado',
-          message: 'Si existe una cuenta con ese email, te hemos enviado un código para restablecer tu contraseña.',
+          header: 'Correo Enviado',
+          message: 'Si existe una cuenta con ese email, te hemos enviado un código.',
           buttons: ['OK']
         });
         await alert.present();
@@ -63,3 +70,4 @@ export class ForgotPasswordPage {
     });
   }
 }
+
