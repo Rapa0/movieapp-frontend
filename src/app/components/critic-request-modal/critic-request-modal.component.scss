@@ -1,0 +1,143 @@
+.back-button-floating-new {
+  position: fixed;
+  top: calc(var(--ion-safe-area-top) + 10px);
+  left: 10px;
+  z-index: 9999;
+  --background: rgba(0, 0, 0, 0.5);
+  --background-hover: rgba(0, 0, 0, 0.7);
+  --box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  --border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  
+  ion-icon {
+    font-size: 28px;
+    color: #ffffff;
+  }
+}
+
+ion-content {
+  --background: #f4f5f8; 
+}
+
+.modal-header-container {
+  min-height: 100%; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 32px 16px;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1974&auto.format&fit=crop'); /* Imagen de fondo de cine */
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding-top: calc(80px + var(--ion-safe-area-top)); 
+}
+
+.modal-header-content {
+  max-width: 600px; 
+  width: 100%;
+  margin: 0 auto;
+}
+
+.modal-page-title {
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2em;
+}
+
+.modal-card {
+  width: 100%;
+  border-radius: 15px; 
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); 
+  padding: 20px;
+  text-align: left; 
+  background-color: rgba(26, 26, 26, 0.9);
+  backdrop-filter: blur(10px) saturate(180%); 
+  -webkit-backdrop-filter: blur(10px) saturate(180%); 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  color: #ffffff; 
+}
+
+.modal-card p {
+  color: #c0c0c0;
+  font-size: 0.9em;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.modal-card ion-item {
+  --background: #282828; 
+  --border-radius: 10px; 
+  --border-color: #3a3a3a; 
+  margin-bottom: 15px; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); 
+}
+
+.native-input, .native-textarea {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 15px 12px;
+  font-size: 1.05em;
+  color: #ffffff;
+  outline: none; 
+  flex: 1; 
+  font-family: 'Roboto', sans-serif; 
+}
+
+.native-textarea {
+  resize: none; 
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.native-input::placeholder, .native-textarea::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
+ion-item::part(native) {
+  padding-left: 0; 
+  padding-right: 0; 
+  display: flex; 
+  align-items: center; 
+}
+
+ion-button[type="submit"] {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: 10px;
+  height: 50px; 
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 25px; 
+  box-shadow: 0 4px 15px rgba(var(--ion-color-primary-rgb), 0.4);
+  transition: all 0.2s ease-in-out;
+}
+
+ion-button[type="submit"]:hover:not([disabled]) {
+  --background: var(--ion-color-primary-shade);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--ion-color-primary-rgb), 0.5);
+}
+
+ion-button[type="submit"][disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.error-message {
+  padding-left: 16px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.error-message p {
+  color: var(--ion-color-danger); 
+  font-size: 0.85em;
+  margin: 2px 0;
+}

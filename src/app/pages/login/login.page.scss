@@ -1,23 +1,43 @@
+.back-button-floating-new {
+  position: fixed;
+  top: calc(var(--ion-safe-area-top) + 10px);
+  left: 10px;
+  z-index: 9999;
+  --background: rgba(0, 0, 0, 0.5);
+  --background-hover: rgba(0, 0, 0, 0.7);
+  --box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  --border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  
+  ion-icon {
+    font-size: 28px;
+    color: #ffffff;
+  }
+}
+
 ion-content {
-  --background: #f4f5f8; 
+  --background: #f4f5f8;
 }
 
 .header-container {
   min-height: 100%; 
   display: flex;
   flex-direction: column;
-  justify-content: center; 
+  justify-content: center;
   padding: 32px 16px;
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=1974&auto.format&fit=crop');
   background-size: cover;
   background-position: center;
   color: white;
+  padding-top: calc(32px + var(--ion-safe-area-top));
 }
 
 .header-content {
   max-width: 450px; 
   width: 100%;
-  margin: 0 auto; 
+  margin: 0 auto;
 }
 
 ion-title {
@@ -34,14 +54,33 @@ ion-item {
   margin-bottom: 16px;
 }
 
-ion-label {
-    color: #555 !important;
+.native-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 16px 10px;
+  font-size: inherit;
+  color: #000 !important;
+  outline: none; 
+  flex: 1; 
+  position: relative;
+  z-index: 2;
 }
 
-ion-input {
-    color: #000 !important;
-    position: relative; 
-    z-index: 2;
+ion-item::part(native) {
+  padding-left: 0; 
+  padding-right: 0; 
+  display: flex; 
+  align-items: center; 
+}
+
+.native-input::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
+ion-label {
+    color: #555 !important;
 }
 
 ion-icon {
@@ -60,7 +99,7 @@ p {
 
 .error-message {
   margin-top: -10px;
-  margin-bottom: 16px; 
+  margin-bottom: 16px;
   padding-left: 15px;
 }
 

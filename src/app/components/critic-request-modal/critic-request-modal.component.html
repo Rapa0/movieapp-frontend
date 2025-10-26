@@ -1,13 +1,50 @@
-<ion-header><ion-toolbar><ion-title>Solicitud para Crítico</ion-title></ion-toolbar></ion-header>
-<ion-content class="ion-padding">
-  <form [formGroup]="requestForm" (ngSubmit)="submit()">
-    <p>Explica por qué deberías ser un crítico y, si tienes, comparte enlaces a tus trabajos (blog, redes sociales, etc.).</p>
-    <ion-item>
-      <ion-textarea label="Motivo" labelPlacement="floating" formControlName="motivo" rows="5"></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-input label="Enlaces (opcional)" labelPlacement="floating" formControlName="enlaces"></ion-input>
-    </ion-item>
-    <ion-button type="submit" expand="block" [disabled]="requestForm.invalid" class="ion-margin-top">Enviar Solicitud</ion-button>
-  </form>
+<ion-button (click)="dismiss()" class="back-button-floating-new">
+  <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+</ion-button>
+
+<ion-content [fullscreen]="true">
+  <div class="modal-header-container"> 
+    <div class="modal-header-content">
+      <ion-title size="large" class="modal-page-title">Solicitud para Crítico</ion-title>
+
+      <ion-card class="modal-card">
+        <ion-card-content>
+          <p>Explica por qué deberías ser un crítico y, si tienes, comparte enlaces a tus trabajos (blog, redes sociales, etc.).</p>
+          
+          <form [formGroup]="requestForm" (ngSubmit)="submit()">
+            <ion-item fill="outline" class="ion-margin-bottom">
+              <textarea
+                formControlName="motivo"
+                placeholder="Motivación (mín. 20 caracteres)..."
+                rows="5"
+                class="native-textarea"></textarea>
+            </ion-item>
+            @if (f['motivo'].touched && f['motivo'].errors) {
+              <div class="error-message">
+                @if (f['motivo'].errors['required']) {
+                  <p>La motivación es requerida.</p>
+                }
+                @if (f['motivo'].errors['minlength']) {
+                  <p>Debe tener al menos 20 caracteres.</p>
+                }
+              </div>
+            }
+
+            <ion-item fill="outline" class="ion-margin-bottom">
+              <input
+                formControlName="enlaces"
+                placeholder="Enlaces (opcional)..."
+                type="text"
+                class="native-input"/>
+            </ion-item>
+            
+            <ion-button type="submit" expand="block" [disabled]="requestForm.invalid" class="ion-margin-top">
+              Enviar Solicitud
+            </ion-button>
+          </form>
+        </ion-card-content>
+      </ion-card>
+
+    </div>
+  </div>
 </ion-content>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { addIcons } from 'ionicons';
-import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline } from 'ionicons/icons';
+import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline } from 'ionicons/icons';
+import { CriticRequestModalComponent } from '../components/critic-request-modal/critic-request-modal.component';
 
 @Component({
   selector: 'app-profile',
@@ -16,23 +17,26 @@ import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutl
     IonicModule, 
     CommonModule, 
     FormsModule, 
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule
   ]
 })
 export class ProfilePage implements OnInit {
   userAuthenticated: boolean | null = null; 
   userName: string = '';
   userEmail: string = '';
+  currentUserRole: string = 'usuario';
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private modalCtrl: ModalController,
+    private alertCtrl: AlertController
   ) {
-    addIcons({ personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline });
+    addIcons({ personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline });
   }
 
   ngOnInit() {
-    this.checkAuthStatus();
     this.authService.isLoggedIn$.subscribe(isLoggedIn => {
         this.userAuthenticated = isLoggedIn;
         if (isLoggedIn) {
@@ -40,8 +44,13 @@ export class ProfilePage implements OnInit {
         } else {
             this.userName = '';
             this.userEmail = '';
+            this.currentUserRole = 'usuario';
         }
     });
+  }
+
+  async ionViewWillEnter() {
+    await this.checkAuthStatus();
   }
 
   async checkAuthStatus() {
@@ -54,14 +63,17 @@ export class ProfilePage implements OnInit {
 
   async loadUserData() {
       try {
-          const user = await this.authService.getMe().toPromise(); 
+          const user: any = await this.authService.getMe().toPromise(); 
           if(user){
               this.userName = user.nombre || 'Usuario'; 
               this.userEmail = user.email || '';
+              this.currentUserRole = user.rol || 'usuario';
           }
       } catch (error) {
           console.error("Error loading user data", error);
-          await this.onLogout();
+          await this.authService.logout();
+          this.userAuthenticated = false;
+          this.currentUserRole = 'usuario';
       }
   }
 
@@ -79,5 +91,46 @@ export class ProfilePage implements OnInit {
 
   goToRegister() {
     this.router.navigate(['/register']);
+  }
+
+  goToAdminPanel() {
+    this.router.navigate(['/admin']);
+  }
+
+  async openCriticRequestModal() {
+    const modal = await this.modalCtrl.create({
+      component: CriticRequestModalComponent
+    });
+    
+    await modal.present();
+    
+    const { data } = await modal.onDidDismiss();
+    
+    if (data) {
+      const formData = {
+        motivacion: data.motivo,
+        redesSocialiales: data.enlaces
+      };
+
+      this.authService.requestCriticStatus(formData).subscribe({
+        next: async (res: any) => {
+          const alert = await this.alertCtrl.create({
+            header: 'Solicitud Enviada',
+            message: 'Tu solicitud para ser crítico ha sido enviada. Será revisada por un administrador.',
+            buttons: ['OK']
+          });
+          await alert.present();
+          this.loadUserData();
+        },
+        error: async (err: any) => {
+          const alert = await this.alertCtrl.create({
+            header: 'Error',
+            message: err.error.msg || 'No se pudo enviar la solicitud. Es posible que ya tengas una pendiente.',
+            buttons: ['OK']
+          });
+          await alert.present();
+        }
+      });
+    }
   }
 }

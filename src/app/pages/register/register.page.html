@@ -1,10 +1,6 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ion-button (click)="goBack()" class="back-button-floating-new">
+  <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+</ion-button>
 
 <ion-content [fullscreen]="true">
   <div class="header-container"> 
@@ -62,26 +58,3 @@
     </div>
   </div>
 </ion-content>
-
-<style>
-  .native-input {
-    border: none;
-    background: transparent;
-    width: 100%;
-    padding: 16px 10px;
-    font-size: inherit;
-    color: #000;
-    outline: none; 
-    flex: 1; 
-  }
-  ion-item::part(native) {
-    padding-left: 0; 
-    padding-right: 0; 
-    display: flex; 
-    align-items: center; 
-  }
-  .native-input::placeholder {
-    color: #888;
-    opacity: 1;
-  }
-</style>

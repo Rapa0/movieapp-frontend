@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, AlertController, IonInput } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { addIcons } from 'ionicons';
-import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { eyeOutline, eyeOffOutline, arrowBackOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-login',
@@ -24,26 +24,27 @@ export class LoginPage {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private location: Location
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]], 
     });
-    addIcons({ eyeOutline, eyeOffOutline });
+    addIcons({ eyeOutline, eyeOffOutline, arrowBackOutline });
   }
 
   get f() { return this.loginForm.controls; }
 
+  goBack() {
+    this.router.navigate(['/tabs/home']); 
+  }
+
   ionViewDidEnter() {
     setTimeout(() => {
-      if (this.emailInput && typeof this.emailInput.setFocus === 'function') {
-        this.emailInput.setFocus();
-      } else if (this.emailInput) {
-        const nativeEl = (this.emailInput as any).el?.querySelector('input');
-        if (nativeEl) {
-            nativeEl.focus();
-        }
+      const nativeEl = (this.emailInput as any).el?.querySelector('input');
+      if (nativeEl) {
+          nativeEl.focus();
       }
     }, 300); 
   }
@@ -62,12 +63,12 @@ export class LoginPage {
     console.log('Intentando iniciar sesión con:', this.loginForm.value); 
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Respuesta de login exitosa:', response); 
         console.log('Navegando a /tabs/home...');
         this.router.navigate(['/tabs/home']); 
       },
-      error: async (err) => {
+      error: async (err: any) => {
         console.error('Error en la respuesta de login:', err); 
         
         const alert = await this.alertController.create({

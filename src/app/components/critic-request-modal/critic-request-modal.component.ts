@@ -6,19 +6,31 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-critic-request-modal',
   templateUrl: './critic-request-modal.component.html',
+  styleUrls: ['./critic-request-modal.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule]
+  imports: [IonicModule, ReactiveFormsModule, CommonModule]
 })
 export class CriticRequestModalComponent {
   requestForm: FormGroup;
 
   constructor(private fb: FormBuilder, private modalCtrl: ModalController) {
     this.requestForm = this.fb.group({
-      motivo: ['', Validators.required],
+      motivo: ['', [Validators.required, Validators.minLength(20)]],
       enlaces: [''] 
     });
   }
 
-  dismiss() { this.modalCtrl.dismiss(); }
-  submit() { this.modalCtrl.dismiss(this.requestForm.value); }
+  get f() { return this.requestForm.controls; }
+
+  dismiss() { 
+    this.modalCtrl.dismiss(null, 'cancel'); 
+  }
+  
+  submit() { 
+    if (this.requestForm.invalid) {
+      this.requestForm.markAllAsTouched();
+      return;
+    }
+    this.modalCtrl.dismiss(this.requestForm.value, 'confirm'); 
+  }
 }

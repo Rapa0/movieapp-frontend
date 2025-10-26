@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, SlicePipe, DatePipe, TitleCasePipe, Location } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { MovieService } from '../../services/movie.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -8,42 +8,51 @@ import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { EditCommentModalComponent } from '../../components/edit-comment-modal/edit-comment-modal.component';
 import { addIcons } from 'ionicons';
-import { trashOutline, createOutline, ribbon } from 'ionicons/icons';
+import { trashOutline, createOutline, ribbon, star, starOutline, starHalf, personCircleOutline, arrowBackOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-movie-details',
   templateUrl: './movie-details.page.html',
   styleUrls: ['./movie-details.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule]
+  imports: [
+    IonicModule, 
+    CommonModule, 
+    ReactiveFormsModule, 
+    RouterModule,
+    SlicePipe,
+    DatePipe,
+    TitleCasePipe
+  ]
 })
 export class MovieDetailsPage implements OnInit {
   movie: any;
   comments: any[] = [];
   cast: any[] = [];
-  isLoggedIn$: Observable<boolean | null>; // Corrected type to accept null
+  isLoggedIn$: Observable<boolean | null>;
   commentForm: FormGroup;
   criticScore: number | null = null;
   userScore: number | null = null;
   currentUserId: string | null = null;
-  showCommentForm = false;
+  currentUserRole: string = 'usuario';
   private movieId = '';
 
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
-    private authService: AuthService,
+    public authService: AuthService,
     private fb: FormBuilder,
     private alertController: AlertController,
     private modalCtrl: ModalController,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
-    this.isLoggedIn$ = this.authService.isLoggedIn$; // Assign the Observable<boolean | null>
+    this.isLoggedIn$ = this.authService.isLoggedIn$;
     this.commentForm = this.fb.group({
       texto: ['', Validators.required],
-      puntuacion: [5, Validators.required]
+      puntuacion: [5, [Validators.required, Validators.min(1), Validators.max(10)]]
     });
-    addIcons({ trashOutline, createOutline, ribbon });
+    addIcons({ trashOutline, createOutline, ribbon, star, starOutline, starHalf, personCircleOutline, arrowBackOutline });
   }
 
   ngOnInit() {
@@ -51,19 +60,38 @@ export class MovieDetailsPage implements OnInit {
     this.loadAllData();
   }
 
-  // Corrected: Use async/await for getUserId
   async ionViewWillEnter() { 
-    this.currentUserId = await this.authService.getUserId(); 
+    await this.loadUserData();
+  }
+
+  async loadUserData() {
+    if (await this.authService.isLoggedInValue()) {
+      try {
+        const user: any = await this.authService.getMe().toPromise(); 
+        if (user) {
+          this.currentUserId = user._id || user.id;
+          this.currentUserRole = user.rol || 'usuario';
+        }
+      } catch (e) {
+        console.error("Error loading user data", e);
+        await this.authService.logout();
+        this.currentUserId = null;
+        this.currentUserRole = 'usuario';
+      }
+    } else {
+      this.currentUserId = null;
+      this.currentUserRole = 'usuario';
+    }
   }
 
   loadAllData() {
-    this.movieService.getMovieDetails(this.movieId).subscribe(res => this.movie = res);
-    this.movieService.getMovieCredits(this.movieId).subscribe(res => this.cast = res.cast.slice(0, 5));
+    this.movieService.getMovieDetails(this.movieId).subscribe((res: any) => this.movie = res);
+    this.movieService.getMovieCredits(this.movieId).subscribe((res: any) => this.cast = res.cast.slice(0, 5));
     this.loadComments();
   }
   
   loadComments() {
-    this.movieService.getComments(this.movieId).subscribe(res => {
+    this.movieService.getComments(this.movieId).subscribe((res: any) => {
       this.comments = res;
       this.calculateScores();
     });
@@ -82,31 +110,46 @@ export class MovieDetailsPage implements OnInit {
     } else { this.userScore = null; }
   }
 
-  async promptComment() {
-    // Check login status asynchronously if needed, or use the synchronous check cautiously
-    const isLoggedIn = this.authService.isLoggedInValue(); 
-    if (isLoggedIn === true) { // Explicitly check for true, ignoring null
-      this.showCommentForm = true;
-    } else if (isLoggedIn === false) { // Handle case where user is definitely logged out
-      const alert = await this.alertController.create({
-        header: 'Inicia Sesión',
-        message: 'Necesitas una cuenta para poder dejar tu reseña.',
-        buttons: [
-          { text: 'Cancelar', role: 'cancel' },
-          { text: 'Iniciar Sesión', handler: () => { this.router.navigate(['/login']); } }
-        ]
-      });
-      await alert.present();
-    } 
-    // If isLoggedIn is null, you might want to show a loading state or disable the button
+  async presentLoginAlert() {
+    const alert = await this.alertController.create({
+      header: 'Necesitas una cuenta',
+      message: 'Para poder dejar tu reseña, por favor inicia sesión o regístrate.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Registrarse', handler: () => { this.router.navigate(['/register']); } },
+        { text: 'Iniciar Sesión', handler: () => { this.router.navigate(['/login']); } }
+      ]
+    });
+    await alert.present();
   }
 
-  submitComment() {
-    if (this.commentForm.invalid) return;
-    this.movieService.postComment(this.movieId, this.commentForm.value).subscribe(() => {
-      this.loadComments();
-      this.commentForm.reset({ puntuacion: 5 });
-      this.showCommentForm = false;
+  async submitComment() {
+    const isLoggedIn = await this.authService.isLoggedInValue();
+    
+    if (isLoggedIn !== true) {
+      await this.presentLoginAlert();
+      return;
+    }
+
+    if (this.commentForm.invalid) {
+      this.commentForm.markAllAsTouched();
+      return;
+    }
+    
+    this.movieService.postComment(this.movieId, this.commentForm.value).subscribe({
+      next: (response: any) => {
+        this.loadComments();
+        this.commentForm.reset({ puntuacion: 5 });
+      },
+      error: async (err: any) => {
+        console.error('Error al publicar comentario:', err);
+        const alert = await this.alertController.create({
+          header: 'Error al Publicar',
+          message: err?.error?.msg || 'No se pudo publicar el comentario. Intenta de nuevo.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
     });
   }
 
@@ -120,11 +163,50 @@ export class MovieDetailsPage implements OnInit {
   }
   
   async handleEdit(comment: any) {
-    const modal = await this.modalCtrl.create({ component: EditCommentModalComponent, componentProps: { comment: comment } });
+    const modal = await this.modalCtrl.create({ 
+      component: EditCommentModalComponent, 
+      componentProps: { comment: { ...comment } } 
+    });
     await modal.present();
     const { data } = await modal.onDidDismiss();
     if (data) {
         this.movieService.updateComment(comment._id, data).subscribe(() => { this.loadComments(); });
     }
+  }
+
+  goBack() {
+    this.location.back();
+  }
+
+  getRating(score: number): string[] {
+    const stars = [];
+    const roundedScore = Math.round(score) / 2;
+    for (let i = 1; i <= 5; i++) {
+      if (i <= roundedScore) {
+        stars.push('star');
+      } else if (i - 0.5 === roundedScore) {
+        stars.push('star-half');
+      } else {
+        stars.push('star-outline');
+      }
+    }
+    return stars;
+  }
+
+  get genreString(): string {
+    if (this.movie && this.movie.genres) {
+      return this.movie.genres.map((g: any) => g.name).join(', ');
+    }
+    return '';
+  }
+  
+  canEdit(commentAutorId: string): boolean {
+    if (!this.currentUserId) {
+      return false;
+    }
+    if (commentAutorId === this.currentUserId) {
+      return true;
+    }
+    return this.currentUserRole === 'admin';
   }
 }

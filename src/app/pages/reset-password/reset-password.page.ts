@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { passwordsMatchValidator } from '../register/register.page';
 import { addIcons } from 'ionicons';
-import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import { eyeOutline, eyeOffOutline, arrowBackOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-reset-password',
@@ -34,7 +34,8 @@ export class ResetPasswordPage implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private alertController: AlertController,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     const navigation = this.router.getCurrentNavigation();
     this.email = navigation?.extras?.state?.['email'] || '';
@@ -48,7 +49,11 @@ export class ResetPasswordPage implements OnInit {
       confirmPassword: ['', [Validators.required]]
     }, { validators: passwordsMatchValidator });
     
-    addIcons({ eyeOutline, eyeOffOutline });
+    addIcons({ eyeOutline, eyeOffOutline, arrowBackOutline });
+  }
+  
+  goBack() {
+    this.location.back();
   }
 
   get f() { return this.resetForm.controls; }
@@ -85,11 +90,11 @@ export class ResetPasswordPage implements OnInit {
     const codigo = this.codeForm.value.codigo;
 
     this.authService.verifyResetCode({ email: this.email, codigo }).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.codigoIngresado = codigo;
         this.verificationComplete = true;
       },
-      error: async (err) => {
+      error: async (err: any) => {
         const alert = await this.alertController.create({
           header: 'Error de Verificación',
           message: err.error.msg || 'El código es incorrecto o ha expirado.',
@@ -121,7 +126,7 @@ export class ResetPasswordPage implements OnInit {
         codigo: this.codigoIngresado, 
         password 
       }).subscribe({
-        next: async (res) => {
+        next: async (res: any) => {
           const alert = await this.alertController.create({
             header: 'Éxito',
             message: 'Contraseña actualizada. Ya puedes iniciar sesión.',
@@ -130,7 +135,7 @@ export class ResetPasswordPage implements OnInit {
           await alert.present();
           this.router.navigate(['/login']);
         },
-        error: async (err) => {
+        error: async (err: any) => {
           const alert = await this.alertController.create({
             header: 'Error',
             message: err.error.msg || 'Error al restablecer. El código pudo haber expirado.',
