@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap, map, switchMap } from 'rxjs/operators';
 import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { Storage } from '@ionic/storage-angular'; // Importa Ionic Storage
+import { Storage } from '@ionic/storage-angular'; 
 
 @Injectable({
   providedIn: 'root'
@@ -11,20 +11,19 @@ import { Storage } from '@ionic/storage-angular'; // Importa Ionic Storage
 export class AuthService {
   private baseUrl = 'https://movieapp-backend-production-4a5b.up.railway.app/api';
   private tokenKey = 'authToken';
-  private _storage: Storage | null = null; // Variable para la instancia de Storage
+  private _storage: Storage | null = null; 
 
   private isLoggedInSubject = new BehaviorSubject<boolean | null>(null);
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor(private http: HttpClient, private storage: Storage) { 
-    this.initStorage(); // Inicializa el storage
+    this.initStorage(); 
   }
 
   async initStorage() {
-    // Crea la instancia de storage (necesario una vez)
     const storage = await this.storage.create();
     this._storage = storage;
-    await this.loadToken(); // Carga el token después de inicializar
+    await this.loadToken(); 
   }
 
   private async loadToken() {
@@ -51,12 +50,11 @@ export class AuthService {
 
   login(credentials: any): Observable<any> {
     return this.http.post<{ token: string }>(`${this.baseUrl}/auth/login`, credentials).pipe(
-      // Usamos switchMap para manejar la promesa de storage.set
       switchMap(response => {
         if (!this._storage) {
           throw new Error('Storage not initialized before login');
         }
-        return from(this._storage.set(this.tokenKey, response.token)).pipe(map(() => response)); // Devuelve la respuesta original
+        return from(this._storage.set(this.tokenKey, response.token)).pipe(map(() => response)); 
       }),
       tap(() => {
         this.isLoggedInSubject.next(true);
@@ -108,7 +106,7 @@ export class AuthService {
   getMe(): Observable<any> {
     return from(this.getToken()).pipe(
       switchMap(token => {
-        if (!token) return of(null); // Si no hay token, devuelve observable nulo
+        if (!token) return of(null); 
         const headers = new HttpHeaders().set('x-auth-token', token);
         return this.http.get(`${this.baseUrl}/usuarios/me`, { headers });
       })

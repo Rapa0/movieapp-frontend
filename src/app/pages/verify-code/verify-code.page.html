@@ -1,33 +1,34 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Verificar Correo</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-button (click)="goBack()" class="back-button-floating-new">
+  <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+</ion-button>
 
-<ion-content class="ion-padding">
-  <div class="ion-text-center">
-    <h2>Revisa tu correo</h2>
-    <p>Hemos enviado un código de 6 dígitos a <strong>{{ email }}</strong>.</p>
-    <p>Por favor, ingrésalo a continuación para completar tu registro.</p>
+<ion-content [fullscreen]="true">
+  <div class="header-container"> 
+    <div class="header-content">
+      <ion-title size="large" class="ion-text-center ion-padding-bottom">Verificar Correo</ion-title>
+      <p class="ion-text-center ion-padding-bottom">Hemos enviado un código de 6 dígitos a <strong>{{ email }}</strong>. Por favor, ingrésalo para completar tu registro.</p>
+
+      <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+        
+        <ion-item fill="outline" class="ion-margin-bottom">
+          <input 
+            type="tel" 
+            formControlName="codigo" 
+            placeholder="Código de 6 dígitos" 
+            class="native-input" 
+            inputmode="numeric" 
+            maxlength="6"/>
+        </ion-item>
+        
+        <div *ngIf="f['codigo'].touched && f['codigo'].errors" class="error-message">
+          <p *ngIf="f['codigo'].errors['required']">El código es obligatorio.</p>
+          <p *ngIf="f['codigo'].errors['minlength'] || f['codigo'].errors['maxlength']">Debe ser de 6 dígitos.</p>
+        </div>
+
+        <ion-button expand="block" type="submit" [disabled]="verifyForm.invalid" class="ion-margin-top">
+          Verificar y Crear Cuenta
+        </ion-button>
+      </form>
+    </div>
   </div>
-
-  <form [formGroup]="verifyForm" (ngSubmit)="onVerify()">
-    <ion-item>
-      <ion-input
-        label="Código de Verificación"
-        labelPlacement="floating"
-        type="text"
-        formControlName="codigo"
-        maxlength="6">
-      </ion-input>
-    </ion-item>
-
-    <ion-button
-      type="submit"
-      expand="block"
-      [disabled]="verifyForm.invalid"
-      class="ion-margin-top">
-      Verificar y Crear Cuenta
-    </ion-button>
-  </form>
 </ion-content>
