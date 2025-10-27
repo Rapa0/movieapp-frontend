@@ -9,7 +9,7 @@ import { Storage } from '@ionic/storage-angular';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'https://movieapp-backend-production-4a5b.up.railway.app/api';
+  private baseUrl = 'https://movieapp-backend-nmo9.onrender.com/api';
   private tokenKey = 'authToken';
   private _storage: Storage | null = null; 
 

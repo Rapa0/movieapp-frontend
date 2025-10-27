@@ -11,7 +11,7 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class MovieService {
   private tmdbUrl = 'https://api.themoviedb.org/3';
-  private backendUrl = 'https://movieapp-backend-production-4a5b.up.railway.app';
+  private backendUrl = 'https://movieapp-backend-nmo9.onrender.com';
   private _storage: Storage | null = null;
   private apiKey = environment.apiKey;
 
