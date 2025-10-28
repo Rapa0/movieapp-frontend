@@ -6,6 +6,9 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-edit-comment-modal',
   templateUrl: './edit-comment-modal.component.html',
+  // --- AÑADE ESTA LÍNEA ---
+  styleUrls: ['./edit-comment-modal.component.scss'],
+  // --- FIN ---
   standalone: true,
   imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })

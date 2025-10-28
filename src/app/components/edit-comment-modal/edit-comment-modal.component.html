@@ -1,19 +1,37 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Editar Comentario</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">Cerrar</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-<ion-content class="ion-padding">
-  <form [formGroup]="editForm" (ngSubmit)="saveChanges()">
-    <ion-item>
-      <ion-textarea label="Tu opinión" formControlName="texto"></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-range [min]="1" [max]="10" [pin]="true" formControlName="puntuacion"></ion-range>
-    </ion-item>
-    <ion-button type="submit" expand="block" [disabled]="editForm.invalid">Guardar Cambios</ion-button>
-  </form>
+<ion-button (click)="dismiss()" class="back-button-floating-new"> <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+</ion-button>
+
+<ion-content class="ion-padding ion-content-center">
+  <div class="modal-form-container">
+    <form [formGroup]="editForm" (ngSubmit)="saveChanges()">
+
+      <ion-item class="ion-margin-bottom input-item">
+        <textarea
+          formControlName="texto"
+          placeholder="Tu opinión"
+          rows="5"
+          class="native-textarea-input"> </textarea>
+      </ion-item>
+
+      <div *ngIf="editForm.get('texto')?.touched && editForm.get('texto')?.errors" class="error-message modal-error">
+        <p *ngIf="editForm.get('texto')?.errors?.['required']">La opinión no puede estar vacía.</p>
+      </div>
+
+      <div class="rating-container">
+        <input
+          type="range"
+          min="1"
+          max="10"
+          step="1"
+          formControlName="puntuacion"
+          class="native-range-input"/>
+        <ion-label class="rating-value-label">Puntuación: {{ editForm.get('puntuacion')?.value }}/10</ion-label>
+      </div>
+
+      <div class="button-group">
+        <ion-button class="cancel-button" type="button" (click)="dismiss()" fill="outline">Cancelar</ion-button>
+        <ion-button type="submit" [disabled]="editForm.invalid">Guardar Cambios</ion-button>
+      </div>
+    </form>
+  </div>
 </ion-content>
