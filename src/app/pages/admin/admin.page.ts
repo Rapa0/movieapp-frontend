@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; 
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, AlertController } from '@ionic/angular';
@@ -16,16 +16,21 @@ import { RouterModule } from '@angular/router';
 })
 export class AdminPage implements OnInit {
   solicitudes: any[] = [];
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
     private alertController: AlertController,
-    private location: Location
+    private location: Location,
+    private cdr: ChangeDetectorRef 
   ) {
     addIcons({ arrowBackOutline });
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
     this.loadSolicitudes();
   }
 
@@ -34,12 +39,23 @@ export class AdminPage implements OnInit {
   }
 
   loadSolicitudes() {
+    if (this.isLoading) return;
+    this.isLoading = true;
+    console.log('AdminPage: Iniciando carga de solicitudes...');
+
     this.authService.getPendingUsers().subscribe({
       next: (data: any) => {
-        this.solicitudes = data;
+        console.log('AdminPage: Solicitudes recibidas del backend:', data); 
+        this.solicitudes = Array.isArray(data) ? data : [];
+        this.isLoading = false;
+        this.cdr.detectChanges(); 
       },
       error: (err: any) => {
-        console.error('Error cargando solicitudes', err);
+        console.error('AdminPage: Error cargando solicitudes:', err); 
+        this.isLoading = false;
+        this.solicitudes = []; 
+        this.showAlert('Error', 'No se pudieron cargar las solicitudes pendientes.');
+        this.cdr.detectChanges(); 
       }
     });
   }
@@ -48,7 +64,7 @@ export class AdminPage implements OnInit {
     this.authService.approveCriticStatus(userId).subscribe({
       next: async (res: any) => {
         await this.showAlert('Éxito', 'Usuario aprobado como crítico.');
-        this.loadSolicitudes();
+        this.loadSolicitudes(); 
       },
       error: async (err: any) => {
         await this.showAlert('Error', err.error.msg || 'No se pudo aprobar la solicitud.');
@@ -60,7 +76,7 @@ export class AdminPage implements OnInit {
     this.authService.rejectCriticStatus(userId).subscribe({
       next: async (res: any) => {
         await this.showAlert('Éxito', 'Solicitud rechazada.');
-        this.loadSolicitudes();
+        this.loadSolicitudes(); 
       },
       error: async (err: any) => {
         await this.showAlert('Error', err.error.msg || 'No se pudo rechazar la solicitud.');
