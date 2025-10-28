@@ -1,7 +1,7 @@
 .back-button-floating-new {
   position: fixed;
-  top: calc(var(--ion-safe-area-top) + 10px);
-  left: 10px;
+  top: calc(var(--ion-safe-area-top, 0px) + 40px);
+  left: 15px;
   z-index: 9999;
   --background: rgba(0, 0, 0, 0.5);
   --background-hover: rgba(0, 0, 0, 0.7);
@@ -10,7 +10,7 @@
   width: 44px;
   height: 44px;
   margin: 0;
-  
+
   ion-icon {
     font-size: 28px;
     color: #ffffff;
@@ -19,10 +19,14 @@
 
 ion-content {
   --background: #f4f5f8;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 .header-container {
-  min-height: 100%; 
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -31,27 +35,41 @@ ion-content {
   background-size: cover;
   background-position: center;
   color: white;
-  padding-top: calc(32px + var(--ion-safe-area-top));
+  padding-top: calc(var(--ion-safe-area-top, 0px) + 60px);
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 32px);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .header-content {
-  max-width: 450px; 
+  max-width: 450px;
   width: 100%;
   margin: 0 auto;
 }
 
-ion-title {
+.page-title {
   font-weight: bold;
   color: white;
+  margin-bottom: 16px;
+  font-size: 1.6em;
+}
+
+.instruction-text {
+  color: #eee;
+  font-size: 0.95em;
   margin-bottom: 24px;
 }
 
-ion-item {
+ion-item.input-item { 
   --background: rgba(255, 255, 255, 0.9);
   --border-radius: 10px;
   color: #333;
   --placeholder-color: #888;
   margin-bottom: 16px;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  display: flex;
+  align-items: center;
 }
 
 .native-input {
@@ -61,8 +79,8 @@ ion-item {
   padding: 16px 10px;
   font-size: inherit;
   color: #000 !important;
-  outline: none; 
-  flex: 1; 
+  outline: none;
+  flex: 1;
   position: relative;
   z-index: 2;
   text-align: center;
@@ -71,10 +89,10 @@ ion-item {
 }
 
 ion-item::part(native) {
-  padding-left: 0; 
-  padding-right: 0; 
-  display: flex; 
-  align-items: center; 
+  padding-left: 0;
+  padding-right: 0;
+  display: flex;
+  align-items: center;
 }
 
 .native-input::placeholder {
@@ -84,11 +102,7 @@ ion-item::part(native) {
   text-align: left;
 }
 
-ion-label {
-    color: #555 !important;
-}
-
-ion-icon {
+ion-icon { 
     color: var(--ion-color-medium-shade);
     position: relative;
     z-index: 3;
@@ -120,4 +134,11 @@ strong {
   padding: 3px 6px;
   border-radius: 3px;
   display: inline-block;
+}
+
+ion-button.submit-button { 
+  height: 48px;
+  font-size: 0.9em;
+  font-weight: 600;
+  text-transform: uppercase;
 }

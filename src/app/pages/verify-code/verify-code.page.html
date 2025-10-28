@@ -3,29 +3,27 @@
 </ion-button>
 
 <ion-content [fullscreen]="true">
-  <div class="header-container"> 
+  <div class="header-container">
     <div class="header-content">
-      <ion-title size="large" class="ion-text-center ion-padding-bottom">Verificar Correo</ion-title>
-      <p class="ion-text-center ion-padding-bottom">Hemos enviado un código de 6 dígitos a <strong>{{ email }}</strong>. Por favor, ingrésalo para completar tu registro.</p>
+      <h2 class="page-title ion-text-center ion-padding-bottom">Verificar Correo</h2> <p class="ion-text-center ion-padding-bottom instruction-text">Hemos enviado un código de 6 dígitos a <strong>{{ email }}</strong>. Por favor, ingrésalo para completar tu registro.</p>
 
       <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
-        
-        <ion-item fill="outline" class="ion-margin-bottom">
-          <input 
-            type="tel" 
-            formControlName="codigo" 
-            placeholder="Código de 6 dígitos" 
-            class="native-input" 
-            inputmode="numeric" 
+
+        <ion-item fill="outline" class="ion-margin-bottom input-item"> <input
+            type="tel"
+            formControlName="codigo"
+            placeholder="Código de 6 dígitos"
+            class="native-input"
+            inputmode="numeric"
             maxlength="6"/>
         </ion-item>
-        
+
         <div *ngIf="f['codigo'].touched && f['codigo'].errors" class="error-message">
           <p *ngIf="f['codigo'].errors['required']">El código es obligatorio.</p>
           <p *ngIf="f['codigo'].errors['minlength'] || f['codigo'].errors['maxlength']">Debe ser de 6 dígitos.</p>
         </div>
 
-        <ion-button expand="block" type="submit" [disabled]="verifyForm.invalid" class="ion-margin-top">
+        <ion-button expand="block" type="submit" [disabled]="verifyForm.invalid" class="ion-margin-top submit-button">
           Verificar y Crear Cuenta
         </ion-button>
       </form>

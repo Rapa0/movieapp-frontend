@@ -1,7 +1,7 @@
 .back-button-floating-new {
   position: fixed;
-  top: calc(var(--ion-safe-area-top) + 10px);
-  left: 10px;
+  top: calc(var(--ion-safe-area-top, 0px) + 40px);
+  left: 15px;
   z-index: 9999;
   --background: rgba(0, 0, 0, 0.5);
   --background-hover: rgba(0, 0, 0, 0.7);
@@ -10,7 +10,7 @@
   width: 44px;
   height: 44px;
   margin: 0;
-  
+
   ion-icon {
     font-size: 28px;
     color: #ffffff;
@@ -19,10 +19,14 @@
 
 ion-content {
   --background: #f4f5f8;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 .admin-header-container {
-  min-height: 100%; 
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -31,11 +35,14 @@ ion-content {
   background-size: cover;
   background-position: center;
   color: white;
-  padding-top: calc(80px + var(--ion-safe-area-top));
+  padding-top: calc(var(--ion-safe-area-top, 0px) + 70px); 
+  padding-bottom: calc(var(--ion-safe-area-bottom, 0px) + 32px);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .admin-header-content {
-  max-width: 900px; 
+  max-width: 900px;
   width: 100%;
   margin: 0 auto;
 }
@@ -50,15 +57,19 @@ ion-content {
 
 .admin-card {
   width: 100%;
-  border-radius: 15px; 
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); 
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   padding: 20px;
-  text-align: left; 
-  background-color: rgba(26, 26, 26, 0.9); 
-  backdrop-filter: blur(10px) saturate(180%); 
-  -webkit-backdrop-filter: blur(10px) saturate(180%); 
-  border: 1px solid rgba(255, 255, 255, 0.2); 
-  color: #ffffff; 
+  text-align: left;
+  background-color: rgba(26, 26, 26, 0.9);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.admin-card ion-card-header { 
+  padding: 0 0 10px 0;
 }
 
 .admin-card ion-card-title {
@@ -67,6 +78,11 @@ ion-content {
   color: #fff;
   border-bottom: 1px solid var(--ion-color-primary);
   padding-bottom: 10px;
+  margin: 0; 
+}
+
+.admin-card ion-card-content { 
+  padding: 10px 0 0 0;
 }
 
 .no-requests {
@@ -78,21 +94,39 @@ ion-content {
 
 .admin-card ion-list {
   background: transparent;
+  padding: 0; 
 }
 
 .admin-card ion-item {
   --background: transparent;
   --border-color: rgba(255, 255, 255, 0.1);
   color: #fff;
+  --padding-start: 0; 
+  --inner-padding-end: 0;
 }
 
 .admin-card ion-label h2 {
   font-weight: bold;
   color: #fff;
+  font-size: 1em; 
 }
 
 .admin-card ion-label p {
   color: #ccc;
   font-size: 0.9em;
   margin-top: 5px;
+}
+
+.admin-card ion-buttons[slot="end"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.admin-card ion-buttons ion-button {
+  --padding-start: 5px;
+  --padding-end: 5px;
+  font-size: 0.8em;
+  margin: 0;
+  height: auto;
 }

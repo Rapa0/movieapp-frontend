@@ -3,16 +3,16 @@
 </ion-button>
 
 <ion-content [fullscreen]="true">
-  <div class="modal-header-container"> 
+  <div class="modal-header-container">
     <div class="modal-header-content">
-      <ion-title size="large" class="modal-page-title">Solicitud para Crítico</ion-title>
+      <h2 class="modal-page-title">Solicitud para Crítico</h2>
 
       <ion-card class="modal-card">
         <ion-card-content>
           <p>Explica por qué deberías ser un crítico y, si tienes, comparte enlaces a tus trabajos (blog, redes sociales, etc.).</p>
-          
+
           <form [formGroup]="requestForm" (ngSubmit)="submit()">
-            <ion-item fill="outline" class="ion-margin-bottom">
+            <ion-item fill="outline" class="ion-margin-bottom input-item">
               <textarea
                 formControlName="motivo"
                 placeholder="Motivación (mín. 20 caracteres)..."
@@ -30,15 +30,15 @@
               </div>
             }
 
-            <ion-item fill="outline" class="ion-margin-bottom">
+            <ion-item fill="outline" class="ion-margin-bottom input-item">
               <input
                 formControlName="enlaces"
                 placeholder="Enlaces (opcional)..."
                 type="text"
                 class="native-input"/>
             </ion-item>
-            
-            <ion-button type="submit" expand="block" [disabled]="requestForm.invalid" class="ion-margin-top">
+
+            <ion-button type="submit" expand="block" [disabled]="requestForm.invalid" class="ion-margin-top submit-button">
               Enviar Solicitud
             </ion-button>
           </form>

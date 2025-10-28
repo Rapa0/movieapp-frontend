@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ModalController, IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; 
+import { addIcons } from 'ionicons';
+import { arrowBackOutline } from 'ionicons/icons'; 
 
 @Component({
   selector: 'app-critic-request-modal',
@@ -13,24 +15,33 @@ import { CommonModule } from '@angular/common';
 export class CriticRequestModalComponent {
   requestForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private modalCtrl: ModalController) {
+  constructor(
+    private fb: FormBuilder,
+    private modalCtrl: ModalController,
+    private location: Location 
+  ) {
     this.requestForm = this.fb.group({
       motivo: ['', [Validators.required, Validators.minLength(20)]],
-      enlaces: [''] 
+      enlaces: ['']
     });
+    addIcons({ arrowBackOutline }); 
   }
 
   get f() { return this.requestForm.controls; }
 
-  dismiss() { 
-    this.modalCtrl.dismiss(null, 'cancel'); 
+  goBack() {
+    this.modalCtrl.dismiss(null, 'cancel');
   }
-  
-  submit() { 
+
+  dismiss() {
+    this.modalCtrl.dismiss(null, 'cancel');
+  }
+
+  submit() {
     if (this.requestForm.invalid) {
       this.requestForm.markAllAsTouched();
       return;
     }
-    this.modalCtrl.dismiss(this.requestForm.value, 'confirm'); 
+    this.modalCtrl.dismiss(this.requestForm.value, 'confirm');
   }
 }

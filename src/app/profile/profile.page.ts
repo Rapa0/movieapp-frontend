@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'; 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { addIcons } from 'ionicons';
-import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline } from 'ionicons/icons';
+import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline, arrowBackOutline, ribbon } from 'ionicons/icons'; // Added arrowBackOutline and ribbon
 import { CriticRequestModalComponent } from '../components/critic-request-modal/critic-request-modal.component';
 
 @Component({
@@ -14,33 +14,35 @@ import { CriticRequestModalComponent } from '../components/critic-request-modal/
   styleUrls: ['./profile.page.scss'],
   standalone: true,
   imports: [
-    IonicModule, 
-    CommonModule, 
-    FormsModule, 
+    IonicModule,
+    CommonModule,
+    FormsModule,
     RouterModule,
     ReactiveFormsModule
   ]
 })
 export class ProfilePage implements OnInit {
-  userAuthenticated: boolean | null = null; 
+  userAuthenticated: boolean | null = null;
   userName: string = '';
   userEmail: string = '';
   currentUserRole: string = 'usuario';
+  showBackButton = true; 
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private modalCtrl: ModalController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private location: Location 
   ) {
-    addIcons({ personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline });
+    addIcons({ personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline, arrowBackOutline, ribbon });
   }
 
   ngOnInit() {
     this.authService.isLoggedIn$.subscribe(isLoggedIn => {
         this.userAuthenticated = isLoggedIn;
         if (isLoggedIn) {
-            this.loadUserData(); 
+            this.loadUserData();
         } else {
             this.userName = '';
             this.userEmail = '';
@@ -54,7 +56,7 @@ export class ProfilePage implements OnInit {
   }
 
   async checkAuthStatus() {
-    const isLoggedIn = await this.authService.isLoggedInValue(); 
+    const isLoggedIn = await this.authService.isLoggedInValue();
     this.userAuthenticated = isLoggedIn;
      if (isLoggedIn) {
          await this.loadUserData();
@@ -62,19 +64,20 @@ export class ProfilePage implements OnInit {
   }
 
   async loadUserData() {
-      try {
-          const user: any = await this.authService.getMe().toPromise(); 
-          if(user){
-              this.userName = user.nombre || 'Usuario'; 
-              this.userEmail = user.email || '';
-              this.currentUserRole = user.rol || 'usuario';
-          }
-      } catch (error) {
-          console.error("Error loading user data", error);
-          await this.authService.logout();
-          this.userAuthenticated = false;
-          this.currentUserRole = 'usuario';
-      }
+     try {
+         const user: any = await this.authService.getMe().toPromise();
+         if(user){
+             this.userName = user.nombre || 'Usuario';
+             this.userEmail = user.email || '';
+             this.currentUserRole = user.rol || 'usuario';
+         }
+     } catch (error) {
+         console.error("Error loading user data", error);
+         this.userAuthenticated = false; 
+         this.userName = '';
+         this.userEmail = '';
+         this.currentUserRole = 'usuario';
+     }
   }
 
   async onLogout() {
@@ -82,6 +85,7 @@ export class ProfilePage implements OnInit {
     this.userAuthenticated = false;
     this.userName = '';
     this.userEmail = '';
+    this.currentUserRole = 'usuario'; 
     this.router.navigate(['/login']);
   }
 
@@ -97,15 +101,19 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/admin']);
   }
 
+  goBack() { 
+    this.location.back();
+  }
+
   async openCriticRequestModal() {
     const modal = await this.modalCtrl.create({
       component: CriticRequestModalComponent
     });
-    
+
     await modal.present();
-    
+
     const { data } = await modal.onDidDismiss();
-    
+
     if (data) {
       const formData = {
         motivacion: data.motivo,

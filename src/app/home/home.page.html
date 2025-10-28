@@ -1,8 +1,9 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
+<ion-header>
+  <ion-toolbar class="ion-safe-area-top">
     <ion-title>Películas</ion-title>
   </ion-toolbar>
-  <ion-toolbar>
+
+  <ion-toolbar class="segment-toolbar">
     <ion-segment [(ngModel)]="selectedSegment" (ionChange)="segmentChanged($event)" value="recientes" mode="md">
       <ion-segment-button value="recientes">
         <ion-label>Recientes</ion-label>
