@@ -1,6 +1,6 @@
 .back-button-floating-new {
   position: fixed;
-  top: calc(var(--ion-safe-area-top) + 40px);
+  top: calc(var(--ion-safe-area-top) + 10px);
   left: 10px;
   z-index: 9999;
   --background: rgba(0, 0, 0, 0.5);
@@ -251,7 +251,7 @@ ion-content {
 
 .comment-form .native-textarea {
   background: #3a3a3a;
-  color: #e0e0e0; 
+  color: #e0e0e0;
   border-radius: 8px;
   border: 1px solid #4a4a4a;
   width: 100%;
@@ -285,14 +285,14 @@ ion-content {
   margin-bottom: 16px;
 }
 
-.rating-label-form { 
+.rating-label-form {
   color: #ccc !important;
   font-size: 0.9em;
   font-weight: 500;
   width: 100%;
   display: block;
-  text-align: center; 
-  margin-bottom: 8px; 
+  text-align: center;
+  margin-bottom: 8px;
 }
 
 .native-range-input {
@@ -409,6 +409,54 @@ ion-button {
   margin-bottom: 24px;
   font-style: italic;
   border: 1px dashed #444;
+}
+
+.login-prompt-card {
+  background: #2a2a2a;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  padding: 24px 20px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-top: 3px solid var(--ion-color-primary);
+}
+
+.login-prompt-card ion-icon {
+  font-size: 3em;
+  color: var(--ion-color-primary);
+  margin-bottom: 12px;
+}
+
+.login-prompt-card p {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin: 0 0 16px 0;
+}
+
+.login-prompt-card ion-button {
+  width: 100%;
+  max-width: 300px;
+  height: 48px;
+  font-size: 1em;
+  margin-top: 0;
+}
+
+.login-prompt-card .register-link {
+  font-size: 0.9em;
+  color: #ccc;
+  margin-top: 16px;
+}
+
+.login-prompt-card .register-link a {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 

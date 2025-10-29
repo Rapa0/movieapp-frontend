@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common'; 
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { addIcons } from 'ionicons';
-import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline, arrowBackOutline, ribbon } from 'ionicons/icons'; // Added arrowBackOutline and ribbon
+import { personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline, arrowBackOutline, ribbon } from 'ionicons/icons';
 import { CriticRequestModalComponent } from '../components/critic-request-modal/critic-request-modal.component';
 
 @Component({
@@ -26,14 +26,14 @@ export class ProfilePage implements OnInit {
   userName: string = '';
   userEmail: string = '';
   currentUserRole: string = 'usuario';
-  showBackButton = true; 
+  showBackButton = true;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private modalCtrl: ModalController,
     private alertCtrl: AlertController,
-    private location: Location 
+    private location: Location
   ) {
     addIcons({ personCircle, settingsOutline, starOutline, lockClosedOutline, filmOutline, ribbonOutline, shieldCheckmarkOutline, arrowBackOutline, ribbon });
   }
@@ -73,7 +73,7 @@ export class ProfilePage implements OnInit {
          }
      } catch (error) {
          console.error("Error loading user data", error);
-         this.userAuthenticated = false; 
+         this.userAuthenticated = false;
          this.userName = '';
          this.userEmail = '';
          this.currentUserRole = 'usuario';
@@ -85,7 +85,7 @@ export class ProfilePage implements OnInit {
     this.userAuthenticated = false;
     this.userName = '';
     this.userEmail = '';
-    this.currentUserRole = 'usuario'; 
+    this.currentUserRole = 'usuario';
     this.router.navigate(['/login']);
   }
 
@@ -101,7 +101,7 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/admin']);
   }
 
-  goBack() { 
+  goBack() {
     this.location.back();
   }
 
@@ -116,7 +116,7 @@ export class ProfilePage implements OnInit {
 
     if (data) {
       const formData = {
-        motivacion: data.motivo,
+        motivo: data.motivo,
         redesSocialiales: data.enlaces
       };
 

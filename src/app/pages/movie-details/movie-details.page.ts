@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { EditCommentModalComponent } from '../../components/edit-comment-modal/edit-comment-modal.component';
 import { addIcons } from 'ionicons';
-import { trashOutline, createOutline, ribbon, star, starOutline, starHalf, personCircleOutline, arrowBackOutline, leaf, cafe } from 'ionicons/icons';
+import { trashOutline, createOutline, ribbon, star, starOutline, starHalf, personCircleOutline, arrowBackOutline, leaf, cafe, logInOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-movie-details',
@@ -54,16 +54,16 @@ export class MovieDetailsPage implements OnInit {
       texto: ['', Validators.required],
       puntuacion: [5, [Validators.required, Validators.min(1), Validators.max(10)]]
     });
-    addIcons({ trashOutline, createOutline, ribbon, star, starOutline, starHalf, personCircleOutline, arrowBackOutline, leaf, cafe });
+    addIcons({ trashOutline, createOutline, ribbon, star, starOutline, starHalf, personCircleOutline, arrowBackOutline, leaf, cafe, logInOutline });
   }
 
   ngOnInit() {
-    this.movieId = this.route.snapshot.paramMap.get('id') as string;
   }
 
   async ionViewWillEnter() {
+    this.movieId = this.route.snapshot.paramMap.get('id') as string;
     await this.loadUserData();
-    this.loadAllData(); 
+    this.loadAllData();
   }
 
   async loadUserData() {
@@ -73,9 +73,12 @@ export class MovieDetailsPage implements OnInit {
         if (user) {
           this.currentUserId = user._id || user.id;
           this.currentUserRole = user.rol || 'usuario';
+        } else {
+          this.currentUserId = null;
+          this.currentUserRole = 'usuario';
         }
       } catch (e) {
-        console.error("Error loading user data", e);
+        console.error("Error loading user data, possibly invalid token:", e);
         this.currentUserId = null;
         this.currentUserRole = 'usuario';
       }
@@ -85,18 +88,21 @@ export class MovieDetailsPage implements OnInit {
     }
   }
 
+
   loadAllData() {
+    if (!this.movieId) return;
     this.movieService.getMovieDetails(this.movieId).subscribe((res: any) => this.movie = res);
     this.movieService.getMovieCredits(this.movieId).subscribe((res: any) => this.cast = res.cast.slice(0, 5));
-    this.loadComments(); 
+    this.loadComments();
   }
 
   loadComments() {
+    if (!this.movieId) return;
     this.movieService.getComments(this.movieId).subscribe((res: any) => {
       this.comments = res;
       this.calculateScores();
-      this.checkIfUserHasCommented(); 
-      this.cdr.detectChanges(); 
+      this.checkIfUserHasCommented();
+      this.cdr.detectChanges();
     });
   }
 
@@ -145,8 +151,9 @@ export class MovieDetailsPage implements OnInit {
 
   async submitComment() {
     const isLoggedIn = await this.authService.isLoggedInValue();
+    const token = await this.authService.getToken();
 
-    if (isLoggedIn !== true) {
+    if (isLoggedIn !== true || !token) {
       await this.presentLoginAlert();
       return;
     }
@@ -165,13 +172,18 @@ export class MovieDetailsPage implements OnInit {
         console.error('Error al publicar comentario:', err);
         const alert = await this.alertController.create({
           header: 'Error al Publicar',
-          message: err?.error?.msg || 'Ya has comentado esta película.', 
+          message: err?.error?.msg || 'No se pudo publicar el comentario. Intenta de nuevo.',
           buttons: ['OK']
         });
         await alert.present();
+        if (err.status === 401) {
+           console.log("Token inválido detectado al comentar, forzando logout.");
+           await this.authService.logout();
+        }
       }
     });
   }
+
 
   async handleDelete(commentId: string) {
     const commentToDelete = this.comments.find(c => c._id === commentId);
@@ -215,6 +227,14 @@ export class MovieDetailsPage implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 
   getRating(score: number): string[] {

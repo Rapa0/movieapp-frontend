@@ -12,9 +12,8 @@
           <ion-card-title>Solicitudes Pendientes</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          @if (solicitudes.length === 0 && !isLoading) { <p class="no-requests">No hay solicitudes pendientes.</p>
-          } @else if (isLoading) {
-            <ion-item lines="none"><ion-spinner name="crescent"></ion-spinner></ion-item>
+          @if (solicitudes.length === 0) {
+            <p class="no-requests">No hay solicitudes pendientes.</p>
           } @else {
             <ion-list lines="full">
               @for (user of solicitudes; track user._id) {
@@ -22,8 +21,9 @@
                   <ion-label>
                     <h2>{{ user.nombre }}</h2>
                     <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>Motivo:</strong> {{ user.solicitudCritico?.motivacion || 'N/A' }}</p>
-                    <p><strong>Redes:</strong> {{ user.solicitudCritico?.redesSociales || 'N/A' }}</p> </ion-label>
+                    <p><strong>Motivo:</strong> {{ user.solicitudCritico?.motivo || 'N/A' }}</p>
+                    <p><strong>Redes:</strong> {{ user.solicitudCritico?.redesSociales || 'N/A' }}</p>
+                  </ion-label>
                   <ion-buttons slot="end">
                     <ion-button fill="clear" color="success" (click)="aprobar(user._id)">Aprobar</ion-button>
                     <ion-button fill="clear" color="danger" (click)="rechazar(user._id)">Rechazar</ion-button>

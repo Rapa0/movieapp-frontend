@@ -62,20 +62,18 @@
         </div>
       </div>
 
-      <ng-container *ngIf="(isLoggedIn$ | async) && !userHasCommented"> <h2 class="section-title">Deja tu Reseña</h2>
+      <ng-container *ngIf="(isLoggedIn$ | async) === true && !userHasCommented">
+        <h2 class="section-title">Deja tu Reseña</h2>
         <div class="comment-form-container">
           <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
-
             <textarea
               formControlName="texto"
               placeholder="Escribe tu opinión aquí..."
               rows="4"
               class="native-textarea"></textarea>
-
             <div *ngIf="commentForm.controls['texto'].touched && commentForm.controls['texto'].errors" class="error-message">
               <p *ngIf="commentForm.controls['texto'].errors['required']">Tu opinión no puede estar vacia.</p>
             </div>
-
             <div class="rating-container">
               <ion-label class="rating-label-form">Tu Puntuación: {{ commentForm.get('puntuacion')?.value }}/10</ion-label>
               <input
@@ -86,7 +84,6 @@
                 formControlName="puntuacion"
                 class="native-range-input"/>
             </div>
-
             <ion-button type="submit" expand="block" [disabled]="commentForm.invalid">
               Publicar Reseña
             </ion-button>
@@ -94,9 +91,19 @@
         </div>
       </ng-container>
 
-      <div *ngIf="(isLoggedIn$ | async) && userHasCommented" class="already-commented-message">
+      <div *ngIf="(isLoggedIn$ | async) === true && userHasCommented" class="already-commented-message">
         <p>Ya has publicado una reseña para esta película.</p>
       </div>
+
+      <div *ngIf="(isLoggedIn$ | async) === false" class="login-prompt-card">
+        <ion-icon name="log-in-outline"></ion-icon>
+        <p>¿Quieres dejar tu propia reseña?</p>
+        <ion-button fill="solid" color="primary" (click)="goToLogin()">
+          Iniciar Sesión para Comentar
+        </ion-button>
+        <span class="register-link">¿No tienes cuenta? <a (click)="goToRegister()">Regístrate</a></span>
+      </div>
+
 
       <h2 class="section-title">Reseñas de Usuarios</h2>
       <div *ngIf="comments.length === 0; else commentList" class="no-comments">
@@ -119,13 +126,10 @@
           </ion-card-header>
           <ion-card-content>
             <p class="comment-text">{{ comment.texto }}</p>
-
             <div *ngIf="comment.autor === currentUserId || currentUserRole === 'admin'" class="comment-actions">
-
               <ion-button *ngIf="comment.autor === currentUserId" fill="clear" color="primary" (click)="handleEdit(comment)">
                 <ion-icon slot="icon-only" name="create-outline"></ion-icon>
               </ion-button>
-
               <ion-button *ngIf="comment.autor === currentUserId || currentUserRole === 'admin'" fill="clear" color="danger" (click)="handleDelete(comment._id)">
                 <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
               </ion-button>
