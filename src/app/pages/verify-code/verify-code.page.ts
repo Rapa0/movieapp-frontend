@@ -17,6 +17,7 @@ import { arrowBackOutline } from 'ionicons/icons';
 export class VerifyCodePage implements OnInit {
   verifyForm: FormGroup;
   email: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -47,11 +48,12 @@ export class VerifyCodePage implements OnInit {
   get f() { return this.verifyForm.controls; }
 
   async onSubmit() {
-    if (this.verifyForm.invalid) {
+    if (this.verifyForm.invalid || this.isLoading) {
       this.verifyForm.markAllAsTouched();
       return;
     }
     
+    this.isLoading = true;
     const { codigo } = this.verifyForm.value;
     
     this.authService.verifyCode({ email: this.email, codigo }).subscribe({
@@ -62,6 +64,7 @@ export class VerifyCodePage implements OnInit {
           buttons: ['OK']
         });
         await alert.present();
+        this.isLoading = false;
         this.router.navigate(['/login']);
       },
       error: async (err: any) => {
@@ -71,6 +74,7 @@ export class VerifyCodePage implements OnInit {
           buttons: ['OK']
         });
         await alert.present();
+        this.isLoading = false;
       }
     });
   }
