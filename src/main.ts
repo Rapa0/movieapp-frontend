@@ -8,7 +8,7 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 
 import { IonicStorageModule } from '@ionic/storage-angular';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'; 
 
 if (environment.production) {
   enableProdMode();
@@ -19,10 +19,10 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes),
-    
+    provideHttpClient(withInterceptorsFromDi()), 
+
     importProvidersFrom(
-      IonicStorageModule.forRoot(),
-      HttpClientModule
+      IonicStorageModule.forRoot()
     )
   ],
 });

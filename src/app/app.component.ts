@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone'; 
 
 @Component({
@@ -7,8 +9,10 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   styleUrls: ['app.component.scss'],
   standalone: true, 
   imports: [
-    IonApp,          
+    IonApp,         
     IonRouterOutlet, 
+    CommonModule,
+    HttpClientModule
   ], 
 })
 export class AppComponent {
