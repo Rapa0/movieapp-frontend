@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { tap, map, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, from, of } from 'rxjs';
+import { tap, map, switchMap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { Storage } from '@ionic/storage-angular'; 
+import { Storage } from '@ionic/storage-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -11,32 +11,54 @@ import { Storage } from '@ionic/storage-angular';
 export class AuthService {
   private baseUrl = 'https://movieapp-backend-nmo9.onrender.com/api';
   private tokenKey = 'authToken';
-  private _storage: Storage | null = null; 
+  private _storage: Storage | null = null;
+  private storageReadyPromise: Promise<void>;
 
   private isLoggedInSubject = new BehaviorSubject<boolean | null>(null);
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  constructor(private http: HttpClient, private storage: Storage) { 
-    this.initStorage(); 
+  constructor(private http: HttpClient, private storage: Storage) {
+    this.storageReadyPromise = this.initStorage();
   }
 
-  async initStorage() {
-    const storage = await this.storage.create();
-    this._storage = storage;
-    await this.loadToken(); 
+  async initStorage(): Promise<void> {
+    try {
+      const storage = await this.storage.create();
+      this._storage = storage;
+      await this.loadToken();
+    } catch (e) {
+      console.error('Error initializing Ionic Storage:', e);
+      this.isLoggedInSubject.next(false);
+    }
   }
 
-  private async loadToken() {
+  private async loadToken(): Promise<void> {
     if (!this._storage) {
-        console.error('Storage not initialized');
-        this.isLoggedInSubject.next(false);
-        return;
+      this.isLoggedInSubject.next(false);
+      return;
     }
     const token = await this._storage.get(this.tokenKey);
-    this.isLoggedInSubject.next(!!token);
+
+    if (token) {
+      this.getMe().subscribe({
+        next: (user) => {
+          if (user) {
+            this.isLoggedInSubject.next(true);
+          } else {
+            this.logout();
+          }
+        },
+        error: (err) => {
+          this.logout();
+        }
+      });
+    } else {
+      this.isLoggedInSubject.next(false);
+    }
   }
 
-  public isLoggedInValue(): boolean | null {
+  public async isLoggedInValue(): Promise<boolean | null> {
+    await this.storageReadyPromise;
     return this.isLoggedInSubject.getValue();
   }
 
@@ -52,9 +74,10 @@ export class AuthService {
     return this.http.post<{ token: string }>(`${this.baseUrl}/auth/login`, credentials).pipe(
       switchMap(response => {
         if (!this._storage) {
-          throw new Error('Storage not initialized before login');
+          console.error('Storage not initialized during login');
+          return of(response);
         }
-        return from(this._storage.set(this.tokenKey, response.token)).pipe(map(() => response)); 
+        return from(this._storage.set(this.tokenKey, response.token)).pipe(map(() => response));
       }),
       tap(() => {
         this.isLoggedInSubject.next(true);
@@ -75,20 +98,18 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
-     if (!this._storage) {
-        console.error('Storage not initialized');
-        return;
-    }
-    await this._storage.remove(this.tokenKey);
-    this.isLoggedInSubject.next(false);
+      if (this._storage) {
+        await this._storage.remove(this.tokenKey);
+      }
+      this.isLoggedInSubject.next(false);
   }
-  
+
   async getToken(): Promise<string | null> {
-     if (!this._storage) {
-        console.error('Storage not initialized');
+      await this.storageReadyPromise;
+      if (!this._storage) {
         return null;
-    }
-    return await this._storage.get(this.tokenKey);
+      }
+      return await this._storage.get(this.tokenKey);
   }
 
   async getUserId(): Promise<string | null> {
@@ -96,9 +117,10 @@ export class AuthService {
     if (!token) return null;
     try {
       const decoded: any = jwtDecode(token);
-      return decoded.usuario.id; 
+      return decoded.usuario.id;
     } catch (error) {
       console.error('Error decodificando token:', error);
+      await this.logout();
       return null;
     }
   }
@@ -106,17 +128,25 @@ export class AuthService {
   getMe(): Observable<any> {
     return from(this.getToken()).pipe(
       switchMap(token => {
-        if (!token) return of(null); 
+        if (!token) {
+          return of(null);
+        }
         const headers = new HttpHeaders().set('x-auth-token', token);
         return this.http.get(`${this.baseUrl}/usuarios/me`, { headers });
+      }),
+      catchError(err => {
+        if (err.status === 401) {
+          this.logout();
+        }
+        return of(null);
       })
     );
   }
 
   requestCriticStatus(applicationData: any): Observable<any> {
-     return from(this.getToken()).pipe(
+      return from(this.getToken()).pipe(
       switchMap(token => {
-        if (!token) return of(null);
+        if (!token) return throwError(() => new Error('No token found'));
         const headers = new HttpHeaders().set('x-auth-token', token);
         return this.http.post(`${this.baseUrl}/usuarios/solicitar-critico`, applicationData, { headers });
       })
@@ -124,19 +154,19 @@ export class AuthService {
   }
 
   getPendingUsers(): Observable<any> {
-     return from(this.getToken()).pipe(
+      return from(this.getToken()).pipe(
       switchMap(token => {
-        if (!token) return of(null);
+        if (!token) return throwError(() => new Error('No token found'));
         const headers = new HttpHeaders().set('x-auth-token', token);
         return this.http.get(`${this.baseUrl}/usuarios/pendientes`, { headers });
       })
     );
   }
-  
+
   approveCriticStatus(userId: string): Observable<any> {
-     return from(this.getToken()).pipe(
+      return from(this.getToken()).pipe(
       switchMap(token => {
-        if (!token) return of(null);
+        if (!token) return throwError(() => new Error('No token found'));
         const headers = new HttpHeaders().set('x-auth-token', token);
         return this.http.put(`${this.baseUrl}/usuarios/aprobar-critico/${userId}`, {}, { headers });
       })
@@ -144,9 +174,9 @@ export class AuthService {
   }
 
   rejectCriticStatus(userId: string): Observable<any> {
-     return from(this.getToken()).pipe(
+      return from(this.getToken()).pipe(
       switchMap(token => {
-        if (!token) return of(null);
+        if (!token) return throwError(() => new Error('No token found'));
         const headers = new HttpHeaders().set('x-auth-token', token);
         return this.http.put(`${this.baseUrl}/usuarios/rechazar-critico/${userId}`, {}, { headers });
       })
