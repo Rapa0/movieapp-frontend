@@ -81,7 +81,7 @@ ion-item.input-item {
   color: #e0e0e0 !important;
   outline: none;
   flex: 1;
-  resize: vertical;
+  resize: none;
   min-height: 100px;
 }
 
@@ -218,6 +218,6 @@ ion-button[type="submit"] {
 ion-button.cancel-button {
   --color: #ccc;
   --border-color: #6c757d;
-  --background-activated: rgba(108, 117, 125, 0.1);
+  --background-activated: rgba(108, 117, 1A25, 0.1);
   --background: transparent;
 }

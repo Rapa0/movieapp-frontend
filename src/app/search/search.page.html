@@ -2,16 +2,16 @@
     <div class="header-container">
         <div class="header-content">
             <ion-title size="large">Encuentra tu Próxima Película</ion-title>
-            <ion-searchbar 
+            <ion-searchbar
                 #searchbar
-                placeholder="Buscar por nombre..." 
+                placeholder="Buscar por nombre..."
                 (ionInput)="handleSearch($event)"
                 [debounce]="500">
             </ion-searchbar>
             <ion-item lines="none" class="genre-selector">
-                <ion-select 
-                    label="O explora por género" 
-                    interface="popover" 
+                <ion-select
+                    label="O explora por género"
+                    interface="popover"
                     (ionChange)="handleGenreChange($event)">
                     @for (genre of genres; track genre.id) {
                       <ion-select-option [value]="genre.id">
@@ -24,10 +24,9 @@
     </div>
 
     <div class="results-container">
-        @if (searchResults.length === 0) {
-          <div class="empty-state">
-              <ion-icon name="film-outline"></ion-icon>
-              <p>Usa la búsqueda o selecciona un género para ver resultados.</p>
+        @if (searchResults.length === 0 && !isLoading) { <div class="empty-state">
+            <ion-icon name="film-outline"></ion-icon>
+            <p>Usa la búsqueda o selecciona un género para ver resultados.</p>
           </div>
         } @else {
           <ion-grid>
@@ -54,4 +53,12 @@
           </ion-grid>
         }
     </div>
+
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)">
+        <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Cargando más...">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
 </ion-content>

@@ -35,28 +35,47 @@ export class MovieService {
     return await this._storage!.get('authToken');
   }
 
+  getLocalScores(movieIds: number[]): Observable<any> {
+    return this.http.post(`${this.backendUrl}/api/comentarios/local-scores`, { movieIds });
+  }
+
+  private mapTmdbResponse(response: any): any {
+    if (response && Array.isArray(response.results)) {
+      response.results = response.results.map((movie: any) => ({
+        ...movie,
+        userScore: null,
+        criticScore: null
+      }));
+    }
+    return response;
+  }
+
   getNowPlayingMovies(page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/now_playing?api_key=${this.apiKey}&page=${page}&language=es-ES`);
+    return this.http.get(`${this.tmdbUrl}/movie/now_playing?api_key=${this.apiKey}&page=${page}&language=es-ES`)
+      .pipe(map(this.mapTmdbResponse));
   }
 
   getTopRatedMovies(page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/top_rated?api_key=${this.apiKey}&page=${page}&language=es-ES`);
+    return this.http.get(`${this.tmdbUrl}/movie/top_rated?api_key=${this.apiKey}&page=${page}&language=es-ES`)
+      .pipe(map(this.mapTmdbResponse));
   }
 
   getUpcomingMovies(page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/upcoming?api_key=${this.apiKey}&page=${page}&language=es-ES`);
+    return this.http.get(`${this.tmdbUrl}/movie/upcoming?api_key=${this.apiKey}&page=${page}&language=es-ES`)
+      .pipe(map(this.mapTmdbResponse));
   }
-  
+
   getMovieDetails(id: string): Observable<any> {
     return this.http.get(`${this.backendUrl}/api/peliculas/${id}`);
   }
-  
+
   getMovieCredits(movieId: string): Observable<any> {
     return this.http.get(`${this.tmdbUrl}/movie/${movieId}/credits?api_key=${this.apiKey}&language=es-ES`);
   }
 
-  searchMovies(query: string): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/search/movie?api_key=${this.apiKey}&query=${query}&language=es-ES`);
+  searchMovies(query: string, page = 1): Observable<any> {
+    return this.http.get(`${this.tmdbUrl}/search/movie?api_key=${this.apiKey}&query=${query}&language=es-ES&page=${page}`)
+      .pipe(map(this.mapTmdbResponse));
   }
 
   getGenres(): Observable<any> {
@@ -64,7 +83,8 @@ export class MovieService {
   }
 
   getMoviesByGenre(genreId: string, page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/discover/movie?api_key=${this.apiKey}&with_genres=${genreId}&page=${page}&language=es-ES`);
+    return this.http.get(`${this.tmdbUrl}/discover/movie?api_key=${this.apiKey}&with_genres=${genreId}&page=${page}&language=es-ES`)
+      .pipe(map(this.mapTmdbResponse));
   }
 
   getComments(movieId: string): Observable<any> {

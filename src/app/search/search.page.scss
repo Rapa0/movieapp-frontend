@@ -1,5 +1,5 @@
 ion-content {
-  --background: #f4f5f8;
+  --background: #1a1a1a;
 }
 
 .header-container {
@@ -49,7 +49,15 @@ ion-searchbar {
   justify-content: center;
   align-items: center;
   height: 50vh;
-  color: #888;
+  color: #aaa;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.empty-state p {
+  text-align: center;
+  max-width: 300px;
+  line-height: 1.5;
 }
 
 .empty-state ion-icon {
@@ -64,7 +72,7 @@ ion-searchbar {
   overflow: hidden;
   border-radius: 8px;
   aspect-ratio: 2 / 3;
-  background-color: #e0e0e0;
+  background-color: #2a2a2a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,10 +113,10 @@ ion-searchbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #e0e0e0;
+  background-color: #2a2a2a;
 }
 
 .no-image-placeholder ion-icon {
   font-size: 48px;
-  color: #a0a0a0;
+  color: #666;
 }
