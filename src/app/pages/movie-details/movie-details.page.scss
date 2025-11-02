@@ -1,6 +1,6 @@
 .back-button-floating-new {
   position: fixed;
-  top: calc(var(--ion-safe-area-top) + 10px);
+  top: calc(var(--ion-safe-area-top) + 50px);
   left: 10px;
   z-index: 9999;
   --background: rgba(0, 0, 0, 0.5);
