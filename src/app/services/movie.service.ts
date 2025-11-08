@@ -10,10 +10,8 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class MovieService {
-  private tmdbUrl = 'https://api.themoviedb.org/3';
   private backendUrl = 'https://movieapp-backend-nmo9.onrender.com';
   private _storage: Storage | null = null;
-  private apiKey = environment.apiKey;
 
   constructor(
     private http: HttpClient,
@@ -50,41 +48,42 @@ export class MovieService {
     return response;
   }
 
+
   getNowPlayingMovies(page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/now_playing?api_key=${this.apiKey}&page=${page}&language=es-ES`)
+    return this.http.get(`${this.backendUrl}/api/peliculas/now-playing?page=${page}`)
       .pipe(map(this.mapTmdbResponse));
   }
 
   getTopRatedMovies(page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/top_rated?api_key=${this.apiKey}&page=${page}&language=es-ES`)
+    return this.http.get(`${this.backendUrl}/api/peliculas/top-rated?page=${page}`)
       .pipe(map(this.mapTmdbResponse));
   }
 
   getUpcomingMovies(page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/upcoming?api_key=${this.apiKey}&page=${page}&language=es-ES`)
+    return this.http.get(`${this.backendUrl}/api/peliculas/upcoming?page=${page}`)
+      .pipe(map(this.mapTmdbResponse));
+  }
+
+  getMovieCredits(movieId: string): Observable<any> {
+    return this.http.get(`${this.backendUrl}/api/peliculas/${movieId}/credits`);
+  }
+
+  searchMovies(query: string, page = 1): Observable<any> {
+    return this.http.get(`${this.backendUrl}/api/peliculas/search?query=${query}&page=${page}`)
+      .pipe(map(this.mapTmdbResponse));
+  }
+
+  getGenres(): Observable<any> {
+    return this.http.get(`${this.backendUrl}/api/peliculas/genres`);
+  }
+
+  getMoviesByGenre(genreId: string, page = 1): Observable<any> {
+    return this.http.get(`${this.backendUrl}/api/peliculas/genre/${genreId}?page=${page}`)
       .pipe(map(this.mapTmdbResponse));
   }
 
   getMovieDetails(id: string): Observable<any> {
     return this.http.get(`${this.backendUrl}/api/peliculas/${id}`);
-  }
-
-  getMovieCredits(movieId: string): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/movie/${movieId}/credits?api_key=${this.apiKey}&language=es-ES`);
-  }
-
-  searchMovies(query: string, page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/search/movie?api_key=${this.apiKey}&query=${query}&language=es-ES&page=${page}`)
-      .pipe(map(this.mapTmdbResponse));
-  }
-
-  getGenres(): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/genre/movie/list?api_key=${this.apiKey}&language=es-ES`);
-  }
-
-  getMoviesByGenre(genreId: string, page = 1): Observable<any> {
-    return this.http.get(`${this.tmdbUrl}/discover/movie?api_key=${this.apiKey}&with_genres=${genreId}&page=${page}&language=es-ES`)
-      .pipe(map(this.mapTmdbResponse));
   }
 
   getComments(movieId: string): Observable<any> {
